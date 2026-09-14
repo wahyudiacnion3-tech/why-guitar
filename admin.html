@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WHY GUITAR — ADMIN</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#151515;color:#eee}
+header{background:#080808;padding:18px 16px;position:sticky;top:0;z-index:4}header b{font-size:21px}header small{display:block;color:#aaa;margin-top:4px}
+nav{display:flex;gap:7px;overflow:auto;background:#202020;padding:9px;position:sticky;top:70px;z-index:4;border-bottom:1px solid #333}
+nav button{border:0;border-radius:11px;padding:11px 14px;white-space:nowrap;background:#3b3b3b;color:#eee}nav button.on{background:#666}
+main{max-width:900px;margin:auto;padding:14px}.page{display:none}.page.on{display:block}
+.panel,form,.service-card{background:#202020;border:1px solid #333;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 3px 12px #080808}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:#202020;border:1px solid #333;border-radius:14px;padding:15px}.card strong{display:block;font-size:21px;margin-top:7px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:13px;font-weight:bold;margin:8px 0 5px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #4b4b4b;border-radius:9px;background:#292929;color:#fff;font-size:15px}
+.primary,.action{border:0;border-radius:10px;padding:11px 14px;font-weight:bold}.primary{background:#555;color:#fff;margin-top:12px}
+.service-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.no{font-size:18px;font-weight:bold}.customer{font-size:17px;margin-top:5px}
+.status-select{font-weight:bold;font-size:15px;padding:10px}.status-select.done{border:2px solid #4caf50}.status-select.work{border:2px solid #ffb300}.status-select.pick{border:2px solid #2196f3}
+.info{margin:12px 0;line-height:1.55}.money{font-size:17px;font-weight:bold}.muted{color:#aaa;font-size:13px}
+.delete{background:#7a3030!important}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.action{background:#353535;color:#fff}.action.done{background:#315c36}.action.wa{background:#31563a}
+.badge{display:inline-block;background:#363636;border-radius:8px;padding:5px 8px;font-size:12px}.danger{color:#ff7777}.ok{color:#72d17b}.empty{text-align:center;color:#999;padding:20px}
+.item{border-top:1px solid #333;padding:12px 0}.item:first-child{border-top:0}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.service-head{display:block}.status-wrap{margin-top:10px}.cards{grid-template-columns:1fr 1fr}}
+</style></head>
+<body>
+<header><b>WHY GUITAR — ADMIN</b><small>Panel Admin • Penjualan • Servis • Kasir</small></header>
+<nav id="nav">
+<button class="on" data-p="dash">🏠 Dashboard</button><button data-p="sell">🛒 Penjualan</button>
+<button data-p="serv">🔧 Servis</button><button data-p="stock">📦 Stok</button><button data-p="expense">💸 Pengeluaran</button>
+<button data-p="report">📊 Laporan</button><button data-p="backup">💾 Backup</button>
+</nav>
+<main>
+<section id="dash" class="page on"><h2>Dashboard</h2><div class="cards">
+<div class="card"><small>Omzet Hari Ini</small><strong id="dSales">Rp 0</strong></div>
+<div class="card"><small>Laba Kotor</small><strong id="dProfit">Rp 0</strong></div>
+<div class="card"><small>Piutang</small><strong id="dDebt">Rp 0</strong></div>
+<div class="card"><small>Servis Berjalan</small><strong id="dServ">0</strong></div></div>
+<div class="panel"><h3>Servis Terbaru</h3><div id="recentServ"></div></div></section>
+
+<section id="sell" class="page"><h2>Penjualan</h2><form id="sellForm"><div class="grid">
+<div><label>Pelanggan</label><input id="sc" required></div><div><label>No. HP WhatsApp</label><input id="sp"></div>
+<div><label>Barang / Jasa</label><input id="si" required></div><div><label>Qty</label><input id="sq" type="number" min="1" value="1"></div>
+<div><label>Harga Jual</label><input id="sv" type="number" min="0" required></div><div><label>Harga Modal / unit</label><input id="sm" type="number" min="0" value="0"></div>
+<div><label>Diskon</label><input id="sd" type="number" min="0" value="0"></div><div><label>Bayar</label><input id="sb" type="number" min="0" value="0"></div>
+<div><label>Metode</label><select id="smet"><option>Cash</option><option>Transfer</option><option>QRIS</option><option>Debit</option></select></div>
+<div><label>Kurangi stok?</label><select id="sstock"><option value="yes">Ya</option><option value="no">Tidak</option></select></div>
+</div><button class="primary">Simpan & Buat Nota</button></form><div class="panel"><div id="sellList"></div></div></section>
+
+<section id="serv" class="page"><h2>Servis</h2>
+<form id="servForm"><div class="grid"><div><label>Pelanggan</label><input id="vc" required></div><div><label>WhatsApp</label><input id="vp"></div>
+<div><label>Gitar</label><input id="vg"></div><div><label>Biaya</label><input id="vcost" type="number" min="0" value="0"></div>
+<div class="full"><label>Keluhan / Pekerjaan</label><textarea id="vjob" rows="3"></textarea></div>
+<div><label>DP</label><input id="vpaid" type="number" min="0" value="0"></div><div><label>Status Awal</label><select id="vstatus"><option>Diterima</option><option>Dikerjakan</option><option>Selesai</option><option>Diambil</option></select></div>
+</div><button class="primary">Simpan Servis</button></form>
+<div id="servList"></div></section>
+
+<section id="stock" class="page"><h2>Stok</h2><form id="stockForm"><div class="grid">
+<div><label>Barang</label><input id="bn" required></div><div><label>Stok</label><input id="bq" type="number" min="0" value="0"></div>
+<div><label>Harga Modal</label><input id="bc" type="number" min="0" value="0"></div><div><label>Harga Jual</label><input id="bs" type="number" min="0" value="0"></div>
+</div><button class="primary">Tambah / Simpan Barang</button></form><div class="panel"><div id="stockList"></div></div></section>
+
+<section id="expense" class="page"><h2>Pengeluaran</h2><form id="expForm"><div class="grid"><div><label>Keterangan</label><input id="en" required></div><div><label>Nominal</label><input id="ea" type="number" min="0" required></div></div><button class="primary">Simpan Pengeluaran</button></form><div class="panel"><div id="expList"></div></div></section>
+
+<section id="report" class="page"><h2>Laporan</h2><div class="panel"><div class="grid"><div><label>Dari</label><input id="from" type="date"></div><div><label>Sampai</label><input id="to" type="date"></div></div><button class="primary" onclick="renderReport()">Tampilkan</button></div>
+<div class="cards"><div class="card"><small>Omzet</small><strong id="rSales">Rp 0</strong></div><div class="card"><small>Laba Kotor</small><strong id="rProfit">Rp 0</strong></div><div class="card"><small>Pengeluaran</small><strong id="rExp">Rp 0</strong></div><div class="card"><small>Laba Bersih</small><strong id="rNet">Rp 0</strong></div></div></section>
+
+<section id="backup" class="page"><h2>Backup & Restore</h2><div class="panel"><button class="primary" onclick="backup()">⬇️ Backup Data</button><label>Pulihkan dari backup</label><input id="restore" type="file" accept=".json"></div></section>
+</main>
+<script>
+const SUPA={url:'https://irfjnhzrfeqqobhbntzu.supabase.co',key:'sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1'};
+const APIH={'apikey':SUPA.key,'Authorization':'Bearer '+SUPA.key,'Content-Type':'application/json','Prefer':'return=representation'};
+let db={sales:[],services:[],stock:[],expenses:[]};
+const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const day=x=>(x||'').slice(0,10), today=()=>new Date().toISOString().slice(0,10);
+async function cloud(table,query='',opts={}){const r=await fetch(SUPA.url+'/rest/v1/'+table+query,{headers:APIH,...opts});if(!r.ok)throw Error(await r.text());return r.status===204?[]:r.json()}
+async function loadCloud(){
+  try{
+    const [sales,services,stock,expenses]=await Promise.all([
+      cloud('sales','?select=*&order=created_at.desc'),
+      cloud('services','?select=*&order=created_at.desc'),
+      cloud('products','?select=*&order=created_at.desc'),
+      cloud('expenses','?select=*&order=created_at.desc')
+    ]);
+    db={sales,services,stock,expenses};
+    const sync=document.getElementById('sync');if(sync){sync.textContent='● Online';sync.className='online'}
+    render();
+  }catch(e){
+    const sync=document.getElementById('sync');if(sync){sync.textContent='● Gagal terhubung';sync.className='error'}
+    console.error(e);alert('Gagal terhubung ke database: '+e.message);
+  }
+}
+function nextNo(prefix){return prefix+'-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-6)}
+async function setStatus(id,status){try{await cloud('services','?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status,updated_at:new Date().toISOString()})});await loadCloud()}catch(e){alert('Gagal mengubah status: '+e.message)}}
+function quickStatus(id,status){setStatus(id,status)}
+async function editService(id){
+  const x=db.services.find(s=>String(s.id)===String(id));
+  if(!x)return;
+  const customer=prompt('Nama pelanggan:',x.customer_name||'');
+  if(customer===null)return;
+  const phone=prompt('No. WhatsApp:',x.phone||'');
+  if(phone===null)return;
+  const guitar=prompt('Gitar / model:',x.guitar||'');
+  if(guitar===null)return;
+  const costRaw=prompt('Biaya servis:',String(Number(x.cost||0)));
+  if(costRaw===null)return;
+  const paidRaw=prompt('DP / total sudah dibayar:',String(Number(x.paid||0)));
+  if(paidRaw===null)return;
+  const complaint=prompt('Keluhan / pekerjaan:',x.complaint||'');
+  if(complaint===null)return;
+  const status=prompt('Status (Diterima / Dikerjakan / Selesai / Diambil):',x.status||'Diterima');
+  if(status===null)return;
+  const cost=Number(String(costRaw).replace(/[^0-9.-]/g,''));
+  const paid=Number(String(paidRaw).replace(/[^0-9.-]/g,''));
+  if(!Number.isFinite(cost)||cost<0||!Number.isFinite(paid)||paid<0)return alert('Biaya atau pembayaran tidak valid.');
+  const allowed=['Diterima','Dikerjakan','Selesai','Diambil'];
+  if(!allowed.includes(status.trim()))return alert('Status tidak valid.');
+  try{
+    await cloud('services','?id=eq.'+id,{method:'PATCH',body:JSON.stringify({
+      customer_name:customer.trim(),phone:phone.trim(),guitar:guitar.trim(),
+      cost,paid:Math.min(paid,cost),complaint:complaint.trim(),
+      status:status.trim(),updated_at:new Date().toISOString()
+    })});
+    await loadCloud();
+    alert('✅ Data servis berhasil diperbarui.');
+  }catch(e){alert('Gagal mengedit servis: '+e.message)}
+}
+async function deleteService(id){
+  const x=db.services.find(s=>String(s.id)===String(id));
+  if(!x)return;
+  if(!confirm('Yakin ingin menghapus servis '+x.service_no+' milik '+x.customer_name+'?\\n\\nData akan dihapus dari database online.'))return;
+  try{
+    await cloud('services','?id=eq.'+id,{method:'DELETE'});
+    await loadCloud();
+    alert('🗑️ Data servis berhasil dihapus.');
+  }catch(e){alert('Gagal menghapus servis: '+e.message)}
+}
+async function payService(id){const x=db.services.find(s=>String(s.id)===String(id));if(!x)return;const cost=Number(x.cost||0),paid=Number(x.paid||0),sisa=Math.max(0,cost-paid);if(sisa<=0)return alert('Servis ini sudah LUNAS.');const raw=prompt('Sisa pembayaran: '+rp(sisa)+'\nMasukkan nominal pembayaran:',String(sisa));if(raw===null)return;const nominal=Number(String(raw).replace(/[^0-9.-]/g,''));if(!Number.isFinite(nominal)||nominal<=0)return alert('Nominal pembayaran tidak valid.');const bayar=Math.min(nominal,sisa),totalPaid=paid+bayar;try{await cloud('services','?id=eq.'+id,{method:'PATCH',body:JSON.stringify({paid:totalPaid,updated_at:new Date().toISOString()})});await loadCloud();alert(totalPaid>=cost?'✅ Pembayaran diterima. SERVIS LUNAS.':'✅ Pembayaran tersimpan. Sisa '+rp(cost-totalPaid)+'.')}catch(e){alert('Gagal menyimpan pembayaran: '+e.message)}}
+function waService(id){const x=db.services.find(s=>String(s.id)===String(id));if(!x)return;let p=(x.phone||'').replace(/\D/g,'');if(p.startsWith('0'))p='62'+p.slice(1);if(!p)return alert('Nomor WhatsApp belum diisi.');const text=`WHY GUITAR\nServis ${x.service_no}\nPelanggan: ${x.customer_name}\nGitar: ${x.guitar||'-'}\nStatus: ${x.status}\nBiaya: ${rp(x.cost)}\nSisa: ${rp(Math.max(0,Number(x.cost)-Number(x.paid)))}`;window.open('https://wa.me/'+p+'?text='+encodeURIComponent(text),'_blank')}
+function printService(id){const x=db.services.find(s=>String(s.id)===String(id));if(!x)return;const w=window.open('','_blank');w.document.write(`<html><body style="font-family:Arial;padding:25px;max-width:700px;margin:auto"><h1>WHY GUITAR</h1><h3>NOTA SERVIS ${esc(x.service_no)}</h3><hr><p><b>Pelanggan:</b> ${esc(x.customer_name)}</p><p><b>Gitar:</b> ${esc(x.guitar||'-')}</p><p><b>Status:</b> ${esc(x.status)}</p><p><b>Keluhan/Pekerjaan:</b><br>${esc(x.complaint||'-')}</p><p><b>Biaya:</b> ${rp(x.cost)}</p><p><b>DP:</b> ${rp(x.paid)}</p><p><b>Sisa:</b> ${rp(Math.max(0,Number(x.cost)-Number(x.paid)))}</p><hr><p>Terima kasih telah mempercayakan gitar Anda kepada WHY GUITAR.</p><script>onload=()=>print()<\/script></body></html>`);w.document.close()}
+function serviceCard(x){return `<div class="service-card"><div class="service-head"><div><div class="no">${esc(x.service_no)}</div><div class="customer">${esc(x.customer_name)} · ${esc(x.guitar||'-')}</div><div class="muted">${day(x.created_at)}</div></div><div class="status-wrap"><label>Status Servis</label><select class="status-select" onchange="setStatus(${x.id},this.value)"><option ${x.status==='Diterima'?'selected':''}>Diterima</option><option ${x.status==='Dikerjakan'?'selected':''}>Dikerjakan</option><option ${x.status==='Selesai'?'selected':''}>Selesai</option><option ${x.status==='Diambil'?'selected':''}>Diambil</option></select></div></div><div class="info"><b>Keluhan/Pekerjaan:</b><br>${esc(x.complaint||'-')}<br><br><span class="money">Biaya ${rp(x.cost)}</span> · DP ${rp(x.paid)} · ${Number(x.paid)>=Number(x.cost)?'<span class="ok">💰 LUNAS</span>':'<span class="danger">Sisa '+rp(Math.max(0,Number(x.cost)-Number(x.paid)))+'</span>'}</div><div class="actions">${x.status!=='Selesai'?`<button class="action done" onclick="quickStatus(${x.id},'Selesai')">🟢 Tandai Selesai</button>`:''}<button class="action" onclick="payService(${x.id})">💰 Bayar</button><button class="action" onclick="editService(${x.id})">✏️ Edit</button><button class="action delete" onclick="deleteService(${x.id})">🗑️ Hapus</button><button class="action wa" onclick="waService(${x.id})">📲 Hubungi Pelanggan</button><button class="action" onclick="printService(${x.id})">🧾 Cetak Nota</button></div></div>`}
+function renderServices(){const q=(document.getElementById('search')?.value||'').toLowerCase();const a=db.services.filter(x=>(x.customer_name+' '+x.service_no+' '+(x.guitar||'')).toLowerCase().includes(q));document.getElementById('servList').innerHTML=a.map(serviceCard).join('')||'<div class="empty">Servis tidak ditemukan.</div>'}
+async function saveService(e){e.preventDefault();try{await cloud('services','',{method:'POST',body:JSON.stringify({service_no:nextNo('WG'),customer_name:vc.value,phone:vp.value,guitar:vg.value,complaint:vjob.value,cost:+vcost.value,paid:+vpaid.value,status:vstatus.value})});e.target.reset();vcost.value=0;vpaid.value=0;await loadCloud();alert('Servis tersimpan online.')}catch(err){alert('Gagal menyimpan servis: '+err.message)}}
+async function saveSale(e){e.preventDefault();try{const q=+sq.value,v=+sv.value,d=+sd.value,total=Math.max(0,q*v-d);await cloud('sales','',{method:'POST',body:JSON.stringify({sale_no:nextNo('PJ'),customer_name:sc.value,phone:sp.value,product_name:si.value,quantity:q,price:v,discount:d,total,paid:+sb.value,payment_method:smet.value})});e.target.reset();sq.value=1;sd.value=0;sb.value=0;sm.value=0;await loadCloud();alert('Penjualan tersimpan online.')}catch(err){alert('Gagal menyimpan penjualan: '+err.message)}}
+async function saveStock(e){e.preventDefault();try{const o=db.stock.find(x=>x.name.toLowerCase()===bn.value.toLowerCase());if(o)await cloud('products','?id=eq.'+o.id,{method:'PATCH',body:JSON.stringify({name:bn.value,stock:+bq.value,cost:+bc.value,sell_price:+bs.value})});else await cloud('products','',{method:'POST',body:JSON.stringify({name:bn.value,stock:+bq.value,cost:+bc.value,sell_price:+bs.value})});e.target.reset();bq.value=0;bc.value=0;bs.value=0;await loadCloud();alert('Stok tersimpan online.')}catch(err){alert('Gagal menyimpan stok: '+err.message)}}
+async function saveExpense(e){e.preventDefault();try{await cloud('expenses','',{method:'POST',body:JSON.stringify({description:en.value,amount:+ea.value})});e.target.reset();await loadCloud();alert('Pengeluaran tersimpan online.')}catch(err){alert('Gagal menyimpan pengeluaran: '+err.message)}}
+function render(){const t=today(),s=db.sales.filter(x=>day(x.created_at)===t),om=s.reduce((a,x)=>a+Number(x.total),0),profit=s.reduce((a,x)=>a+Number(x.total)-Number(x.price)*Number(x.quantity),0),debt=db.sales.reduce((a,x)=>a+Math.max(0,Number(x.total)-Number(x.paid)),0)+db.services.reduce((a,x)=>a+Math.max(0,Number(x.cost)-Number(x.paid)),0);dSales.textContent=rp(om);dProfit.textContent=rp(profit);dDebt.textContent=rp(debt);dServ.textContent=db.services.filter(x=>x.status!=='Diambil').length;recentServ.innerHTML=db.services.slice(0,5).map(serviceCard).join('')||'<div class="empty">Belum ada servis.</div>';renderServices();sellList.innerHTML=db.sales.slice(0,30).map(x=>`<div class=item><b>${esc(x.sale_no)}</b> · ${esc(x.customer_name)} · ${esc(x.product_name)}<br>${rp(x.total)} · ${Number(x.paid)>=Number(x.total)?'<span class=ok>Lunas</span>':'<span class=danger>Sisa '+rp(Number(x.total)-Number(x.paid))+'</span>'}</div>`).join('')||'<div class=empty>Belum ada penjualan.</div>';stockList.innerHTML=db.stock.map(x=>`<div class=item><b>${esc(x.name)}</b> · Stok <b>${x.stock}</b><br>Modal ${rp(x.cost)} · Jual ${rp(x.sell_price)}</div>`).join('')||'<div class=empty>Belum ada barang.</div>';expList.innerHTML=db.expenses.map(x=>`<div class=item>${day(x.created_at)} · <b>${esc(x.description)}</b><br>${rp(x.amount)}</div>`).join('')||'<div class=empty>Belum ada pengeluaran.</div>'}
+function renderReport(){const f=from.value||'0000-01-01',t=to.value||'9999-12-31',s=db.sales.filter(x=>day(x.created_at)>=f&&day(x.created_at)<=t),e=db.expenses.filter(x=>day(x.created_at)>=f&&day(x.created_at)<=t),sales=s.reduce((a,x)=>a+Number(x.total),0),p=s.reduce((a,x)=>a+Number(x.total)-Number(x.price)*Number(x.quantity),0),ex=e.reduce((a,x)=>a+Number(x.amount),0);rSales.textContent=rp(sales);rProfit.textContent=rp(p);rExp.textContent=rp(ex);rNet.textContent=rp(p-ex)}
+function backup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.download='why-guitar-backup-'+today()+'.json';a.click()}
+restore.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);alert('Backup lokal siap dibaca, tetapi restore ke database online belum diaktifkan untuk mencegah data tertimpa.')}catch{alert('Backup tidak valid.')}};r.readAsText(f)};
+servForm.onsubmit=saveService;sellForm.onsubmit=saveSale;stockForm.onsubmit=saveStock;expForm.onsubmit=saveExpense;
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById(b.dataset.p).classList.add('on');if(b.dataset.p==='report')renderReport()});
+loadCloud();
+</script></body></html>
