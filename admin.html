@@ -41,7 +41,7 @@ h2{font-size:28px;margin:8px 0 18px;letter-spacing:-.5px}h3{margin-top:0}.panel,
     <p>WHY GUITAR Service Management</p>
     <form id="loginForm">
       <label>Email Admin</label>
-      <input id="loginEmail" type="email" autocomplete="username" placeholder="admin@email.com" required>
+      <input id="loginEmail" type="email" autocomplete="username" value="wahyudiacnion2@gmail.com" placeholder="admin@email.com" required>
       <label>Password</label>
       <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required>
       <button class="login-btn" type="submit">🔓 Masuk ke Admin</button>
@@ -136,7 +136,7 @@ const APIH=()=>({'apikey':SUPA.key,'Authorization':'Bearer '+(accessToken||SUPA.
 async function supaAuth(path,body){
   const r=await fetch(SUPA.url+'/auth/v1/'+path,{method:'POST',headers:{'apikey':SUPA.key,'Content-Type':'application/json'},body:JSON.stringify(body)});
   const data=await r.json().catch(()=>({}));
-  if(!r.ok) throw Error(data.error_description||data.msg||data.message||'Login gagal');
+  if(!r.ok) throw Error(data.error_description||data.msg||data.message||'Email atau password salah. Pastikan memakai akun Supabase yang baru dibuat.');
   return data;
 }
 async function loginAdmin(email,password){
@@ -168,15 +168,20 @@ async function logoutAdmin(){
 }
 function showApp(){
   $('loginGate').style.display='none';$('logoutBtn').style.display='block';
-  
+}
+
+// Login handler must be attached while the login screen is visible.
 $('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
+  const email=$('loginEmail').value.trim();
+  const password=$('loginPassword').value;
   $('loginError').textContent='Memeriksa akun...';
   try{
-    await loginAdmin($('loginEmail').value.trim(),$('loginPassword').value);
+    await loginAdmin(email,password);
     $('loginError').textContent='';
   }catch(err){
-    $('loginError').textContent='❌ '+err.message;
+    console.error('Login error:',err);
+    $('loginError').textContent='❌ '+(err.message||'Login gagal');
   }
 });
 $('logoutBtn').addEventListener('click',logoutAdmin);
@@ -188,8 +193,6 @@ $('logoutBtn').addEventListener('click',logoutAdmin);
     catch(e){ if(await refreshAdmin()) showApp(); else logoutAdmin(); }
   }
 })();
-
-}
 
 let db={sales:[],services:[],stock:[],expenses:[]};
 // Explicit DOM references: do not rely on browser-created global variables for element IDs.
