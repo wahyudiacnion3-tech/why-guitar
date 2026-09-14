@@ -7,16 +7,16 @@
 :root{--bg:#090a0c;--panel:rgba(25,27,32,.82);--panel2:rgba(16,18,22,.9);--line:rgba(255,255,255,.10);--text:#f7f7f8;--muted:#a7acb7;--accent:#e94b4b;--accent2:#f0a62b;--green:#49c77b}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 50% -10%,rgba(233,75,75,.15),transparent 35%),radial-gradient(circle at 0 50%,rgba(240,166,43,.07),transparent 30%),var(--bg);color:var(--text);min-height:100vh}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.025),transparent 40%,rgba(233,75,75,.025));z-index:-1}
-header{padding:22px 18px 16px;background:rgba(8,9,11,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+header{padding:22px 18px 16px;background:rgba(8,9,11,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);position:relative;z-index:40}
 .admin-brand{max-width:980px;margin:auto;display:flex;align-items:center;gap:16px}.brand-logo{display:block;width:132px;height:auto;max-height:92px;object-fit:contain;background:#fff;border-radius:18px;padding:7px;flex:none;box-shadow:0 8px 28px rgba(0,0,0,.35)}.brand-copy b{font-size:23px;letter-spacing:.5px}.brand-copy small{display:block;color:var(--muted);margin-top:5px;font-size:13px}
-nav{display:flex;gap:8px;overflow:auto;max-width:980px;margin:0 auto;padding:12px 14px;background:rgba(13,14,17,.92);position:sticky;top:125px;z-index:9;border-bottom:1px solid var(--line);scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{border:1px solid var(--line);border-radius:13px;padding:11px 15px;white-space:nowrap;background:rgba(255,255,255,.055);color:#ddd;font-weight:700;transition:.2s}nav button.on{background:linear-gradient(135deg,var(--accent),#b92f37);border-color:rgba(255,255,255,.16);color:#fff;box-shadow:0 5px 18px rgba(233,75,75,.22)}
+nav{display:flex;gap:8px;overflow:auto;max-width:980px;margin:0 auto;padding:12px 14px;background:rgba(13,14,17,.98);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line);scrollbar-width:none;pointer-events:auto}nav::-webkit-scrollbar{display:none}nav button{border:1px solid var(--line);border-radius:13px;padding:11px 15px;white-space:nowrap;background:rgba(255,255,255,.055);color:#ddd;font-weight:700;transition:.2s;cursor:pointer;pointer-events:auto;touch-action:manipulation;position:relative;z-index:51}nav button.on{background:linear-gradient(135deg,var(--accent),#b92f37);border-color:rgba(255,255,255,.16);color:#fff;box-shadow:0 5px 18px rgba(233,75,75,.22)}
 main{max-width:980px;margin:auto;padding:22px 14px 50px}.page{display:none}.page.on{display:block;animation:fade .22s ease}@keyframes fade{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
 h2{font-size:28px;margin:8px 0 18px;letter-spacing:-.5px}h3{margin-top:0}.panel,form,.service-card{background:linear-gradient(145deg,rgba(30,32,38,.88),rgba(18,20,24,.9));border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 14px 40px rgba(0,0,0,.24);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:linear-gradient(145deg,rgba(35,37,43,.9),rgba(19,21,25,.92));border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 10px 28px rgba(0,0,0,.18)}.card small{color:var(--muted)}.card strong{display:block;font-size:20px;margin-top:8px;color:#fff}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}label{display:block;font-size:12px;font-weight:800;color:#b9bdc7;margin:8px 0 6px;letter-spacing:.2px}input,select,textarea{width:100%;padding:13px 14px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:rgba(8,9,12,.52);color:#fff;font-size:15px;outline:none;transition:.2s}input:focus,select:focus,textarea:focus{border-color:rgba(233,75,75,.75);box-shadow:0 0 0 3px rgba(233,75,75,.10)}
 .primary,.action{border:0;border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer;transition:.18s}.primary{background:linear-gradient(135deg,var(--accent2),#e58c17);color:#17100a;margin-top:14px;box-shadow:0 8px 22px rgba(240,166,43,.16)}.primary:hover,.action:hover{transform:translateY(-1px)}
 .service-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.no{font-size:19px;font-weight:900}.customer{font-size:17px;margin-top:5px}.status-select{font-weight:800;font-size:14px;padding:10px}.status-select.done{border:2px solid #4caf50}.status-select.work{border:2px solid #ffb300}.status-select.pick{border:2px solid #2196f3}.info{margin:14px 0;line-height:1.6}.money{font-size:17px;font-weight:900}.muted{color:var(--muted);font-size:13px}.delete{background:#7a3030!important}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.action{background:#30333a;color:#fff}.action.done{background:#315c36}.action.wa{background:#31563a}.badge{display:inline-block;background:#363941;border-radius:9px;padding:5px 8px;font-size:12px}.danger{color:#ff7777}.ok{color:#72d17b}.empty{text-align:center;color:#999;padding:25px}.item{border-top:1px solid var(--line);padding:13px 0}.item:first-child{border-top:0}
-@media(max-width:700px){header{padding:16px 13px 12px}.admin-brand{gap:12px}.brand-logo{width:105px;max-height:76px;border-radius:15px}.brand-copy b{font-size:19px}.brand-copy small{font-size:11px}nav{top:104px;padding:9px 10px}main{padding:17px 11px 40px}h2{font-size:25px}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.service-head{display:block}.status-wrap{margin-top:10px}.panel,form,.service-card{padding:15px;border-radius:17px}}
+@media(max-width:700px){header{padding:16px 13px 12px}.admin-brand{gap:12px}.brand-logo{width:105px;max-height:76px;border-radius:15px}.brand-copy b{font-size:19px}.brand-copy small{font-size:11px}nav{top:0;padding:9px 10px}main{padding:17px 11px 40px}h2{font-size:25px}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.service-head{display:block}.status-wrap{margin-top:10px}.panel,form,.service-card{padding:15px;border-radius:17px}}
 @media(max-width:380px){.brand-logo{width:88px}.brand-copy b{font-size:17px}.cards{gap:8px}.card{padding:13px}.card strong{font-size:17px}}
 .photo-row{display:flex;gap:12px;margin:14px 0;flex-wrap:wrap}.photo-row>div{flex:1;min-width:140px}.photo-row small{display:block;font-weight:800;margin-bottom:6px}.photo-row img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid #333}</style></head>
 <body>
@@ -68,6 +68,11 @@ h2{font-size:28px;margin:8px 0 18px;letter-spacing:-.5px}h3{margin-top:0}.panel,
 const SUPA={url:'https://irfjnhzrfeqqobhbntzu.supabase.co',key:'sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1'};
 const APIH={'apikey':SUPA.key,'Authorization':'Bearer '+SUPA.key,'Content-Type':'application/json','Prefer':'return=representation'};
 let db={sales:[],services:[],stock:[],expenses:[]};
+// Explicit DOM references: do not rely on browser-created global variables for element IDs.
+const $=id=>document.getElementById(id);
+const [dSales,dProfit,dDebt,dServ,recentServ,sellList,stockList,expList,rSales,rProfit,rExp,rNet,from,to,servForm,sellForm,stockForm,expForm,restore,vc,vp,vg,vcost,vjob,vbefore,vafter,vpaid,vstatus,sc,sp,si,sq,sv,sm,sd,sb,smet,sstock,bn,bq,bc,bs,en,ea]=[
+  'dSales','dProfit','dDebt','dServ','recentServ','sellList','stockList','expList','rSales','rProfit','rExp','rNet','from','to','servForm','sellForm','stockForm','expForm','restore','vc','vp','vg','vcost','vjob','vbefore','vafter','vpaid','vstatus','sc','sp','si','sq','sv','sm','sd','sb','smet','sstock','bn','bq','bc','bs','en','ea'
+].map($);
 const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const day=x=>(x||'').slice(0,10), today=()=>new Date().toISOString().slice(0,10);
@@ -148,7 +153,22 @@ function render(){const t=today(),s=db.sales.filter(x=>day(x.created_at)===t),om
 function renderReport(){const f=from.value||'0000-01-01',t=to.value||'9999-12-31',s=db.sales.filter(x=>day(x.created_at)>=f&&day(x.created_at)<=t),e=db.expenses.filter(x=>day(x.created_at)>=f&&day(x.created_at)<=t),sales=s.reduce((a,x)=>a+Number(x.total),0),p=s.reduce((a,x)=>a+Number(x.total)-Number(x.price)*Number(x.quantity),0),ex=e.reduce((a,x)=>a+Number(x.amount),0);rSales.textContent=rp(sales);rProfit.textContent=rp(p);rExp.textContent=rp(ex);rNet.textContent=rp(p-ex)}
 function backup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.download='why-guitar-backup-'+today()+'.json';a.click()}
 restore.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);alert('Backup lokal siap dibaca, tetapi restore ke database online belum diaktifkan untuk mencegah data tertimpa.')}catch{alert('Backup tidak valid.')}};r.readAsText(f)};
-servForm.onsubmit=saveService;sellForm.onsubmit=saveSale;stockForm.onsubmit=saveStock;expForm.onsubmit=saveExpense;
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById(b.dataset.p).classList.add('on');if(b.dataset.p==='report')renderReport()});
+servForm.addEventListener('submit',saveService);
+sellForm.addEventListener('submit',saveSale);
+stockForm.addEventListener('submit',saveStock);
+expForm.addEventListener('submit',saveExpense);
+restore.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{JSON.parse(r.result);alert('Backup lokal siap dibaca, tetapi restore ke database online belum diaktifkan untuk mencegah data tertimpa.')}catch{alert('Backup tidak valid.')}};r.readAsText(f)});
+function openPage(id,button){
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('on'));
+  if(button)button.classList.add('on');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  const page=$(id); if(page) page.classList.add('on');
+  if(id==='report') renderReport();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('#nav button').forEach(b=>{
+  b.addEventListener('click',()=>openPage(b.dataset.p,b));
+  b.addEventListener('touchend',e=>{e.preventDefault();openPage(b.dataset.p,b)},{passive:false});
+});
 loadCloud();
 </script></body></html>
