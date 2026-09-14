@@ -96,6 +96,19 @@ async function loadCloud(){
 function nextNo(prefix){return prefix+'-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-6)}
 async function setStatus(id,status){try{await cloud('services','?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status,updated_at:new Date().toISOString()})});await loadCloud()}catch(e){alert('Gagal mengubah status: '+e.message)}}
 function quickStatus(id,status){setStatus(id,status)}
+async function pickPhoto(existingLabel){
+  return new Promise(resolve=>{
+    const input=document.createElement('input');
+    input.type='file'; input.accept='image/*'; input.style.display='none';
+    document.body.appendChild(input);
+    input.addEventListener('change',async()=>{
+      try{ resolve(input.files[0] ? await resizePhoto(input.files[0]) : null); }
+      catch(e){ alert('Foto gagal diproses: '+e.message); resolve(null); }
+      finally{ input.remove(); }
+    },{once:true});
+    input.click();
+  });
+}
 async function editService(id){
   const x=db.services.find(s=>String(s.id)===String(id));
   if(!x)return;
@@ -118,14 +131,26 @@ async function editService(id){
   if(!Number.isFinite(cost)||cost<0||!Number.isFinite(paid)||paid<0)return alert('Biaya atau pembayaran tidak valid.');
   const allowed=['Diterima','Dikerjakan','Selesai','Diambil'];
   if(!allowed.includes(status.trim()))return alert('Status tidak valid.');
+
+  let photos={before:null,after:null};
+  try{ photos=typeof x.photo_url==='string'&&x.photo_url ? JSON.parse(x.photo_url) : (x.photo_url||{}); }catch(e){ photos={before:null,after:null}; }
+  if(!photos || typeof photos!=='object') photos={before:null,after:null};
+
+  const changeBefore=confirm('📷 Foto SEBELUM\n\nTekan OK untuk memilih/ganti foto.\nTekan Batal untuk mempertahankan foto lama.');
+  if(changeBefore){ const picked=await pickPhoto(); if(picked) photos.before=picked; }
+  const changeAfter=confirm('📷 Foto SESUDAH\n\nTekan OK untuk memilih/ganti foto.\nTekan Batal untuk mempertahankan foto lama.');
+  if(changeAfter){ const picked=await pickPhoto(); if(picked) photos.after=picked; }
+  const removePhotos=confirm('🗑️ Hapus foto?\n\nOK = hapus semua foto sebelum & sesudah.\nBatal = simpan foto yang ada.');
+  if(removePhotos) photos={before:null,after:null};
+
   try{
     await cloud('services','?id=eq.'+id,{method:'PATCH',body:JSON.stringify({
       customer_name:customer.trim(),phone:phone.trim(),guitar:guitar.trim(),
       cost,paid:Math.min(paid,cost),complaint:complaint.trim(),
-      status:status.trim(),updated_at:new Date().toISOString()
+      status:status.trim(),photo_url:(photos.before||photos.after)?JSON.stringify(photos):'',updated_at:new Date().toISOString()
     })});
     await loadCloud();
-    alert('✅ Data servis berhasil diperbarui.');
+    alert('✅ Data servis berhasil diperbarui, termasuk foto.');
   }catch(e){alert('Gagal mengedit servis: '+e.message)}
 }
 async function deleteService(id){
