@@ -4,111 +4,769 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>WHY GUITAR — Cek Status</title>
+
 <style>
-:root{--bg:#0d0f13;--card:#171a21;--muted:#9da5b4;--text:#f5f7fb;--accent:#e9a536;--line:#2b303b}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0d0f13,#17130d);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Arial}
-.wrap{max-width:760px;margin:auto;padding:28px 20px 55px}.brand{text-align:center;margin-bottom:34px}.brandmark{display:inline-grid;place-items:center;width:86px;height:86px;border-radius:18px;background:#fff;color:#4b1010;font-weight:900;font-size:14px;line-height:1.05;box-shadow:0 8px 30px #0006}.brandmark small{display:block;font-size:8px;margin-top:4px}.brand h1{font-size:42px;margin:28px 0 8px}.muted{color:var(--muted)}.card{background:rgba(23,26,33,.96);border:1px solid var(--line);border-radius:22px;padding:24px;margin-top:18px;box-shadow:0 12px 40px #0005}
-input,button{width:100%;padding:15px 16px;border-radius:14px;font:inherit}input{margin-top:18px;background:#11141a;color:var(--text);border:1px solid var(--line);outline:none}button{margin-top:14px;background:var(--accent);border:0;color:#17120a;font-weight:900;cursor:pointer}
-.result{margin-top:18px}.resultbox{background:#11141a;border:1px solid var(--line);border-radius:16px;padding:18px}.head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.badge{padding:7px 11px;border-radius:99px;background:#26372f;color:#7ee0ad;font-size:12px;font-weight:800}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.item{background:#171b22;border:1px solid var(--line);padding:12px;border-radius:12px}.label{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.error{padding:16px;border-radius:14px;background:#21171a;border:1px solid #533038}.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:18px 0 8px}.step{height:8px;background:#303643;border-radius:99px}.step.on{background:var(--accent)}.wa{display:block;text-align:center;text-decoration:none;color:#17120a;background:var(--accent);font-weight:900;padding:14px;border-radius:14px;margin-top:16px}
-@media(max-width:600px){.brand h1{font-size:34px}.grid{grid-template-columns:1fr}.steps{grid-template-columns:repeat(3,1fr)}}
+:root{
+ --bg:#0d0f13;
+ --card:#171a21;
+ --muted:#9da5b4;
+ --text:#f5f7fb;
+ --accent:#e9a536;
+ --line:#2b303b
+}
+
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ background:linear-gradient(135deg,#0d0f13,#17130d);
+ color:var(--text);
+ font-family:system-ui,-apple-system,Segoe UI,Arial
+}
+
+.wrap{
+ max-width:760px;
+ margin:auto;
+ padding:28px 20px 55px
+}
+
+.brand{
+ text-align:center;
+ margin-bottom:34px
+}
+
+.brandmark{
+ display:inline-grid;
+ place-items:center;
+ width:86px;
+ height:86px;
+ border-radius:18px;
+ background:#fff;
+ color:#4b1010;
+ font-weight:900;
+ font-size:14px;
+ line-height:1.05;
+ box-shadow:0 8px 30px #0006
+}
+
+.brandmark small{
+ display:block;
+ font-size:8px;
+ margin-top:4px
+}
+
+.brand h1{
+ font-size:42px;
+ margin:28px 0 8px
+}
+
+.muted{color:var(--muted)}
+
+.card{
+ background:rgba(23,26,33,.96);
+ border:1px solid var(--line);
+ border-radius:22px;
+ padding:24px;
+ margin-top:18px;
+ box-shadow:0 12px 40px #0005
+}
+
+input,button{
+ width:100%;
+ padding:15px 16px;
+ border-radius:14px;
+ font:inherit
+}
+
+input{
+ margin-top:18px;
+ background:#11141a;
+ color:var(--text);
+ border:1px solid var(--line);
+ outline:none
+}
+
+button{
+ margin-top:14px;
+ background:var(--accent);
+ border:0;
+ color:#17120a;
+ font-weight:900;
+ cursor:pointer
+}
+
+.result{margin-top:18px}
+
+.resultbox{
+ background:#11141a;
+ border:1px solid var(--line);
+ border-radius:16px;
+ padding:18px
+}
+
+.head{
+ display:flex;
+ justify-content:space-between;
+ gap:12px;
+ align-items:flex-start
+}
+
+.badge{
+ padding:7px 11px;
+ border-radius:99px;
+ background:#26372f;
+ color:#7ee0ad;
+ font-size:12px;
+ font-weight:800
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:14px
+}
+
+.item{
+ background:#171b22;
+ border:1px solid var(--line);
+ padding:12px;
+ border-radius:12px
+}
+
+.label{
+ display:block;
+ color:var(--muted);
+ font-size:11px;
+ margin-bottom:4px
+}
+
+.error{
+ padding:16px;
+ border-radius:14px;
+ background:#21171a;
+ border:1px solid #533038
+}
+
+.steps{
+ display:grid;
+ grid-template-columns:repeat(6,1fr);
+ gap:5px;
+ margin:18px 0 8px
+}
+
+.step{
+ height:8px;
+ background:#303643;
+ border-radius:99px
+}
+
+.step.on{background:var(--accent)}
+
+.wa{
+ display:block;
+ text-align:center;
+ text-decoration:none;
+ color:#17120a;
+ background:var(--accent);
+ font-weight:900;
+ padding:14px;
+ border-radius:14px;
+ margin-top:16px
+}
+
+/* FOTO */
+.photos{
+ margin-top:16px
+}
+
+.photo-title{
+ font-size:15px;
+ font-weight:900;
+ margin-bottom:8px
+}
+
+.photo-box{
+ background:#171b22;
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:10px;
+ margin-top:12px
+}
+
+.photo-box img{
+ display:block;
+ width:100%;
+ max-height:500px;
+ object-fit:contain;
+ border-radius:10px;
+ background:#0b0d10
+}
+
+.photo-caption{
+ color:var(--muted);
+ font-size:12px;
+ margin-bottom:8px
+}
+
+@media(max-width:600px){
+ .brand h1{font-size:34px}
+ .grid{grid-template-columns:1fr}
+ .steps{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
+
   <div class="brand">
-    <div class="brandmark">WHY<br>GUITAR<small>Guitar Service</small></div>
+    <div class="brandmark">
+      WHY<br>GUITAR
+      <small>Guitar Service</small>
+    </div>
+
     <h1>Cek Status Gitar</h1>
-    <div class="muted">Masukkan nomor service yang Anda terima.</div>
+
+    <div class="muted">
+      Masukkan nomor service yang Anda terima.
+    </div>
   </div>
 
+
   <section class="card">
-    <input id="serviceNo" placeholder="Contoh: WG-2026-0002" autocomplete="off" autocapitalize="characters">
-    <button id="checkBtn">Cek Status</button>
+
+    <input
+      id="serviceNo"
+      placeholder="Contoh: WG-2026-0002"
+      autocomplete="off"
+      autocapitalize="characters"
+    >
+
+    <button id="checkBtn">
+      Cek Status
+    </button>
+
     <div id="result" class="result"></div>
+
   </section>
+
 
   <section class="card">
+
     <h2>📚 Riwayat Service</h2>
-    <p class="muted">Masukkan nomor WhatsApp dan nomor service untuk melihat riwayat service Anda.</p>
-    <input id="phone" placeholder="Nomor WhatsApp, contoh: 0812xxxxxxxx">
-    <input id="historyNo" placeholder="Nomor Service, contoh: WG-2026-0002">
-    <button id="historyBtn">Lihat Riwayat</button>
+
+    <p class="muted">
+      Masukkan nomor WhatsApp dan nomor service untuk melihat riwayat service Anda.
+    </p>
+
+    <input
+      id="phone"
+      placeholder="Nomor WhatsApp, contoh: 0812xxxxxxxx"
+    >
+
+    <input
+      id="historyNo"
+      placeholder="Nomor Service, contoh: WG-2026-0002"
+    >
+
+    <button id="historyBtn">
+      Lihat Riwayat
+    </button>
+
     <div id="historyResult" class="result"></div>
+
   </section>
 
-  <a class="wa" href="https://wa.me/6281258240494" target="_blank">💬 WhatsApp: 0812-5824-0494</a>
+
+  <a
+    class="wa"
+    href="https://wa.me/6281258240494"
+    target="_blank"
+  >
+    💬 WhatsApp: 0812-5824-0494
+  </a>
+
 </div>
 
-<script>
-const SUPABASE_URL='https://irfjnhzrfeqqobhbntzu.supabase.co';
-const SUPABASE_KEY='sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1';
-const STATUSES=['Diterima','Sedang diperiksa','Menunggu persetujuan','Sedang dikerjakan','Quality control','Selesai / siap diambil'];
 
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function norm(v){return String(v||'').trim().toUpperCase()}
-function rupiah(v){const n=Number(v||0);return Number.isFinite(n)?'Rp '+n.toLocaleString('id-ID'):'-'}
-function headers(){return {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Accept':'application/json'}}
+<script>
+
+const SUPABASE_URL='https://irfjnhzrfeqqobhbntzu.supabase.co';
+
+const SUPABASE_KEY='sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1';
+
+const STATUSES=[
+ 'Diterima',
+ 'Sedang diperiksa',
+ 'Menunggu persetujuan',
+ 'Sedang dikerjakan',
+ 'Quality control',
+ 'Selesai / siap diambil'
+];
+
+
+function esc(v){
+ return String(v??'').replace(
+   /[&<>"']/g,
+   m=>({
+     '&':'&amp;',
+     '<':'&lt;',
+     '>':'&gt;',
+     '"':'&quot;',
+     "'":'&#039;'
+   }[m])
+ );
+}
+
+
+function norm(v){
+ return String(v||'').trim().toUpperCase();
+}
+
+
+function rupiah(v){
+ const n=Number(v||0);
+
+ return Number.isFinite(n)
+   ?'Rp '+n.toLocaleString('id-ID')
+   :'-';
+}
+
+
+function headers(){
+ return {
+   'apikey':SUPABASE_KEY,
+   'Authorization':'Bearer '+SUPABASE_KEY,
+   'Accept':'application/json'
+ };
+}
+
+
+/* =========================
+   AMBIL DATA SERVICE
+========================= */
 
 async function queryService(no){
-  const clean=norm(no);
-  if(!clean) return null;
-  const url=SUPABASE_URL+'/rest/v1/services?service_no=eq.'+encodeURIComponent(clean)+'&select=*&limit=1';
-  const res=await fetch(url,{headers:headers()});
-  if(!res.ok) throw new Error('Database HTTP '+res.status);
-  const rows=await res.json();
-  return rows[0]||null;
+
+ const clean=norm(no);
+
+ if(!clean) return null;
+
+ const url=
+ SUPABASE_URL+
+ '/rest/v1/services?service_no=eq.'+
+ encodeURIComponent(clean)+
+ '&select=*&limit=1';
+
+ const res=await fetch(
+   url,
+   {headers:headers()}
+ );
+
+ if(!res.ok)
+   throw new Error('Database HTTP '+res.status);
+
+ const rows=await res.json();
+
+ return rows[0]||null;
 }
+
+
+/* =========================
+   BACA FOTO
+========================= */
+
+function getPhotos(service){
+
+ let photos={
+   before:null,
+   after:null
+ };
+
+ try{
+
+   if(!service.photo_url)
+     return photos;
+
+   if(typeof service.photo_url==='string'){
+
+     try{
+       photos=JSON.parse(service.photo_url);
+     }catch(e){
+
+       /* Jika photo_url ternyata langsung URL */
+       photos={
+         before:service.photo_url,
+         after:null
+       };
+
+     }
+
+   }else if(typeof service.photo_url==='object'){
+
+     photos=service.photo_url;
+
+   }
+
+ }catch(e){
+   console.log('Foto tidak dapat dibaca:',e);
+ }
+
+ return {
+   before:photos.before||null,
+   after:photos.after||null
+ };
+
+}
+
+
+/* =========================
+   TAMPILKAN FOTO
+========================= */
+
+function renderPhotos(service){
+
+ const photos=getPhotos(service);
+
+ let html='';
+
+ if(photos.before){
+
+   html+=`
+   <div class="photo-box">
+
+     <div class="photo-caption">
+       📷 Foto sebelum service
+     </div>
+
+     <img
+       src="${esc(photos.before)}"
+       alt="Foto sebelum service"
+       loading="lazy"
+       onerror="this.parentElement.style.display='none'"
+     >
+
+   </div>
+   `;
+
+ }
+
+ if(photos.after){
+
+   html+=`
+   <div class="photo-box">
+
+     <div class="photo-caption">
+       📷 Foto sesudah service
+     </div>
+
+     <img
+       src="${esc(photos.after)}"
+       alt="Foto sesudah service"
+       loading="lazy"
+       onerror="this.parentElement.style.display='none'"
+     >
+
+   </div>
+   `;
+
+ }
+
+ if(!html)
+   return '';
+
+ return `
+ <div class="photos">
+
+   <div class="photo-title">
+     📸 Dokumentasi Service
+   </div>
+
+   ${html}
+
+ </div>
+ `;
+
+}
+
+
+/* =========================
+   TAMPILKAN SERVICE
+========================= */
 
 function renderService(s){
-  const status=String(s.status||'Diterima');
-  let idx=STATUSES.findIndex(x=>x.toLowerCase()===status.toLowerCase());
-  if(idx<0) idx=Math.max(0,Math.min(5,Math.round(Number(s.progress||0)/20)));
-  const paid=Number(s.paid||0), cost=Number(s.cost||s.total_cost||0);
-  const remaining=Math.max(0,cost-paid);
-  return `<div class="resultbox">
-    <div class="head"><div><h2 style="margin:0">${esc(s.service_no||'-')}</h2><div class="muted">${esc(s.customer_name||s.customer||'-')} · ${esc(s.guitar||'-')}</div></div><span class="badge">${esc(status)}</span></div>
-    <div class="steps">${STATUSES.map((_,i)=>`<div class="step ${i<=idx?'on':''}"></div>`).join('')}</div>
-    <div class="grid">
-      <div class="item"><span class="label">Pelanggan</span>${esc(s.customer_name||'-')}</div>
-      <div class="item"><span class="label">Gitar</span>${esc(s.guitar||'-')}</div>
-      <div class="item"><span class="label">Status</span>${esc(status)}</div>
-      <div class="item"><span class="label">Biaya</span>${rupiah(cost)}</div>
-      <div class="item"><span class="label">Sudah dibayar</span>${rupiah(paid)}</div>
-      <div class="item"><span class="label">Sisa</span>${remaining?rupiah(remaining):'LUNAS'}</div>
-    </div>
-    <div class="item" style="margin-top:10px"><span class="label">Keluhan</span>${esc(s.complaint||'-')}</div>
-  </div>`;
+
+ const status=
+   String(s.status||'Diterima');
+
+ let idx=
+   STATUSES.findIndex(
+     x=>x.toLowerCase()===status.toLowerCase()
+   );
+
+ if(idx<0){
+
+   idx=Math.max(
+     0,
+     Math.min(
+       5,
+       Math.round(Number(s.progress||0)/20)
+     )
+   );
+
+ }
+
+ const paid=Number(s.paid||0);
+
+ const cost=
+   Number(
+     s.cost||
+     s.total_cost||
+     0
+   );
+
+ const remaining=
+   Math.max(
+     0,
+     cost-paid
+   );
+
+
+ return `
+
+ <div class="resultbox">
+
+   <div class="head">
+
+     <div>
+
+       <h2 style="margin:0">
+         ${esc(s.service_no||'-')}
+       </h2>
+
+       <div class="muted">
+         ${esc(s.customer_name||s.customer||'-')}
+         ·
+         ${esc(s.guitar||'-')}
+       </div>
+
+     </div>
+
+     <span class="badge">
+       ${esc(status)}
+     </span>
+
+   </div>
+
+
+   <div class="steps">
+
+     ${STATUSES.map(
+       (_,i)=>
+       `<div class="step ${i<=idx?'on':''}"></div>`
+     ).join('')}
+
+   </div>
+
+
+   <div class="grid">
+
+     <div class="item">
+       <span class="label">Pelanggan</span>
+       ${esc(s.customer_name||'-')}
+     </div>
+
+     <div class="item">
+       <span class="label">Gitar</span>
+       ${esc(s.guitar||'-')}
+     </div>
+
+     <div class="item">
+       <span class="label">Status</span>
+       ${esc(status)}
+     </div>
+
+     <div class="item">
+       <span class="label">Biaya</span>
+       ${rupiah(cost)}
+     </div>
+
+     <div class="item">
+       <span class="label">Sudah dibayar</span>
+       ${rupiah(paid)}
+     </div>
+
+     <div class="item">
+       <span class="label">Sisa</span>
+       ${remaining?rupiah(remaining):'LUNAS'}
+     </div>
+
+   </div>
+
+
+   <div
+     class="item"
+     style="margin-top:10px"
+   >
+
+     <span class="label">
+       Keluhan
+     </span>
+
+     ${esc(s.complaint||'-')}
+
+   </div>
+
+
+   ${renderPhotos(s)}
+
+ </div>
+
+ `;
+
 }
+
+
+/* =========================
+   CEK STATUS
+========================= */
 
 async function checkStatus(){
-  const r=document.getElementById('result');
-  r.innerHTML='<div class="muted">Memeriksa data online...</div>';
-  try{
-    const s=await queryService(document.getElementById('serviceNo').value);
-    if(!s){r.innerHTML='<div class="error"><b>Nomor service tidak ditemukan.</b><br>Periksa kembali kode service Anda.</div>';return}
-    r.innerHTML=renderService(s);
-  }catch(e){
-    r.innerHTML='<div class="error"><b>Gagal membaca database.</b><br>'+esc(e.message)+'</div>';
-  }
+
+ const r=
+   document.getElementById('result');
+
+ r.innerHTML=
+   '<div class="muted">Memeriksa data online...</div>';
+
+ try{
+
+   const s=
+     await queryService(
+       document.getElementById('serviceNo').value
+     );
+
+   if(!s){
+
+     r.innerHTML=
+       '<div class="error"><b>Nomor service tidak ditemukan.</b><br>Periksa kembali kode service Anda.</div>';
+
+     return;
+   }
+
+   r.innerHTML=
+     renderService(s);
+
+ }catch(e){
+
+   r.innerHTML=
+     '<div class="error"><b>Gagal membaca database.</b><br>'+
+     esc(e.message)+
+     '</div>';
+
+ }
+
 }
 
+
+/* =========================
+   RIWAYAT
+========================= */
+
 async function history(){
-  const r=document.getElementById('historyResult'), no=norm(document.getElementById('historyNo').value), phone=document.getElementById('phone').value.trim();
-  r.innerHTML='<div class="muted">Memeriksa riwayat online...</div>';
-  if(!no || !phone){r.innerHTML='<div class="error">Isi nomor WhatsApp dan nomor service.</div>';return}
-  try{
-    const s=await queryService(no);
-    if(!s){r.innerHTML='<div class="error"><b>Nomor service tidak ditemukan.</b></div>';return}
-    const dbPhone=String(s.phone||'').replace(/\D/g,''), inPhone=phone.replace(/\D/g,'');
-    if(dbPhone && inPhone && !dbPhone.endsWith(inPhone) && !inPhone.endsWith(dbPhone)){
-      r.innerHTML='<div class="error"><b>Data tidak cocok.</b><br>Nomor WhatsApp tidak sesuai dengan service tersebut.</div>';return
-    }
-    r.innerHTML=renderService(s);
-  }catch(e){r.innerHTML='<div class="error"><b>Gagal membaca database.</b><br>'+esc(e.message)+'</div>'}
+
+ const r=
+   document.getElementById('historyResult');
+
+ const no=
+   norm(
+     document.getElementById('historyNo').value
+   );
+
+ const phone=
+   document.getElementById('phone').value.trim();
+
+ r.innerHTML=
+   '<div class="muted">Memeriksa riwayat online...</div>';
+
+ if(!no || !phone){
+
+   r.innerHTML=
+     '<div class="error">Isi nomor WhatsApp dan nomor service.</div>';
+
+   return;
+ }
+
+ try{
+
+   const s=
+     await queryService(no);
+
+   if(!s){
+
+     r.innerHTML=
+       '<div class="error"><b>Nomor service tidak ditemukan.</b></div>';
+
+     return;
+   }
+
+   const dbPhone=
+     String(s.phone||'')
+     .replace(/\D/g,'');
+
+   const inPhone=
+     phone.replace(/\D/g,'');
+
+   if(
+     dbPhone &&
+     inPhone &&
+     !dbPhone.endsWith(inPhone) &&
+     !inPhone.endsWith(dbPhone)
+   ){
+
+     r.innerHTML=
+       '<div class="error"><b>Data tidak cocok.</b><br>Nomor WhatsApp tidak sesuai dengan service tersebut.</div>';
+
+     return;
+   }
+
+   r.innerHTML=
+     renderService(s);
+
+ }catch(e){
+
+   r.innerHTML=
+     '<div class="error"><b>Gagal membaca database.</b><br>'+
+     esc(e.message)+
+     '</div>';
+
+ }
+
 }
-document.getElementById('checkBtn').onclick=checkStatus;
-document.getElementById('historyBtn').onclick=history;
-document.getElementById('serviceNo').addEventListener('keydown',e=>{if(e.key==='Enter')checkStatus()});
+
+
+/* =========================
+   TOMBOL
+========================= */
+
+document.getElementById('checkBtn')
+ .onclick=checkStatus;
+
+document.getElementById('historyBtn')
+ .onclick=history;
+
+document.getElementById('serviceNo')
+ .addEventListener(
+   'keydown',
+   e=>{
+     if(e.key==='Enter')
+       checkStatus();
+   }
+ );
+
 </script>
+
 </body>
 </html>
