@@ -100,12 +100,9 @@ async function tes(){
       encodeURIComponent(nomor) +
       "&select=*";
 
-    const response = await fetch(url,{
-      method:"GET",
-      headers:{
-  "apikey":KEY_SUPABASE
-      }
-    });
+    const response = await fetch(
+  url + "&apikey=" + encodeURIComponent(KEY_SUPABASE)
+);
 
     const text = await response.text();
 
