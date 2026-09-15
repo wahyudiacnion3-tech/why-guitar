@@ -148,11 +148,7 @@ async function queryService(no){
 
   if(!clean) return null;
 
-  const url =
-    SUPABASE_URL +
-    '/rest/v1/services?service_no=eq.' +
-    encodeURIComponent(clean) +
-    '&select=*&limit=1';
+  const url=SUPABASE_URL+'/rest/v1/service?service_no=eq.'+encodeURIComponent(clean)+'&select=*&limit=1';
 
   const res=await fetch(url,{
     method:'GET',
