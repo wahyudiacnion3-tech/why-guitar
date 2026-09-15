@@ -1,1 +1,135 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WHY GUITAR</title><link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#e12626"><style>*{box-sizing:border-box}body{margin:0;background:#090a0c;color:#fff;font-family:Arial}.box{max-width:560px;margin:12vh auto;padding:30px 24px;background:#15171d;border:1px solid #33353e;border-radius:28px;text-align:center}.logo{width:150px}.btn{display:block;width:100%;padding:17px;margin-top:14px;border:0;border-radius:15px;background:#e12626;color:white;font-weight:700;font-size:17px;text-decoration:none}.install{display:none;background:white;color:#111}.sub{color:#aaa;margin-bottom:25px}</style></head><body><main class="box"><img class="logo" src="./icon-192.svg"><h1>WHY GUITAR</h1><div class="sub">Cek Status Service Gitar</div><a class="btn" href="./cek-status.html">🎸 Buka Cek Status</a><a class="btn" href="./admin.html">🔐 Buka Admin</a><button id="i" class="btn install">📱 Pasang di HP</button></main><script>if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js");let p;addEventListener("beforeinstallprompt",e=>{e.preventDefault();p=e;i.style.display="block"});i.onclick=()=>p&&p.prompt()</script></body></html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHY GUITAR - Service</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#08090b;
+  color:#fff;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.container{
+  width:100%;
+  max-width:680px;
+  background:#17191f;
+  border:1px solid #30333b;
+  border-radius:28px;
+  padding:55px 30px;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+
+.logo{
+  width:180px;
+  height:180px;
+  object-fit:contain;
+  border-radius:25px;
+  margin-bottom:35px;
+  background:#000;
+}
+
+h1{
+  font-size:42px;
+  margin:0 0 14px;
+  font-weight:800;
+}
+
+.subtitle{
+  color:#aeb2bd;
+  font-size:20px;
+  margin-bottom:45px;
+}
+
+.button{
+  display:block;
+  width:100%;
+  padding:20px;
+  margin:20px 0;
+  border-radius:18px;
+  background:#ed2027;
+  color:white;
+  text-decoration:none;
+  font-size:22px;
+  font-weight:800;
+  border:0;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.button:active{
+  transform:scale(.97);
+}
+
+.footer{
+  margin-top:35px;
+  color:#777d89;
+  font-size:13px;
+}
+
+@media(max-width:500px){
+  .container{
+    padding:45px 20px;
+  }
+
+  .logo{
+    width:160px;
+    height:160px;
+  }
+
+  h1{
+    font-size:36px;
+  }
+
+  .subtitle{
+    font-size:18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <img
+    class="logo"
+    src="logo.png"
+    alt="WHY GUITAR"
+  >
+
+  <h1>WHY GUITAR</h1>
+
+  <div class="subtitle">
+    Cek Status Service Gitar
+  </div>
+
+  <a class="button" href="cek-status.html">
+    🎸 Buka Cek Status
+  </a>
+
+  <a class="button" href="admin.html">
+    🔐 Buka Admin
+  </a>
+
+  <div class="footer">
+    WHY GUITAR SERVICE
+  </div>
+
+</div>
+
+</body>
+</html>
