@@ -90,7 +90,7 @@ async function checkStatus(){
  const no=document.getElementById('serviceNo').value.trim(); const out=document.getElementById('statusResult');
  if(!no){out.innerHTML='<div class="err">Masukkan nomor service dulu.</div>';return}
  out.innerHTML='Memuat...';
- try{const d=await api(`services?select=service_no,customer_name,guitar,status,cost,paid,complaint,updated_at&service_no=eq.${encodeURIComponent(no)}&limit=1`);
+ try{const d=await api(`services?select=service_no,customer_name,guitar,status,cost,paid,complaint,updated_at,photo_url&service_no=eq.${encodeURIComponent(no)}&limit=1`);
  out.innerHTML=d.length?card(d[0]):'<div class="err">Nomor service tidak ditemukan.</div>'}
  catch(e){out.innerHTML='<div class="err">Tidak dapat terhubung ke server.</div>'}
 }
