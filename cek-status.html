@@ -1,253 +1,227 @@
-  return {
-    'apikey':SUPABASE_KEY,
-    'Authorization':'Bearer ' + SUPABASE_KEY,
-    'Content-Type':'application/json',
-    'Accept':'application/json'
-  };
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>WHY GUITAR - Cek Status</title>
+
+<style>
+*{
+  box-sizing:border-box;
 }
 
-async function queryService(no){
-
-  const clean = String(no || '').trim();
-
-  if(!clean){
-    return null;
-  }
-
-  const url =
-    SUPABASE_URL +
-    '/rest/v1/services' +
-    '?service_no=eq.' +
-    encodeURIComponent(clean) +
-    '&select=*' +
-    '&limit=1';
-
-  const res = await fetch(url,{
-    method:'GET',
-    headers:headers()
-  });
-
-  if(!res.ok){
-    const text = await res.text();
-    throw new Error(
-      'Supabase HTTP ' +
-      res.status +
-      ': ' +
-      text
-    );
-  }
-
-  const rows = await res.json();
-
-  return rows[0] || null;
+body{
+  margin:0;
+  background:#0d0f13;
+  color:#f5f7fb;
+  font-family:Arial, sans-serif;
 }
 
-function renderService(s){
+.wrap{
+  width:min(760px,100%);
+  margin:auto;
+  padding:28px 20px 55px;
+}
 
-  const status =
-    String(s.status || 'Diterima');
+.brand{
+  text-align:center;
+  margin-bottom:34px;
+}
 
-  let idx =
-    STATUSES.findIndex(
-      x =>
-        x.toLowerCase() ===
-        status.toLowerCase()
-    );
+.brandmark{
+  display:inline-block;
+  font-weight:800;
+  letter-spacing:1px;
+  font-size:18px;
+}
 
-  if(idx < 0){
-    idx = 0;
+.brandmark small{
+  display:block;
+  color:#9da5b4;
+  font-size:12px;
+  margin-top:3px;
+}
+
+h1{
+  text-align:center;
+  font-size:42px;
+  margin:0 0 12px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#9da5b4;
+  font-size:17px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:#171a21;
+  border:1px solid #2b303b;
+  border-radius:18px;
+  padding:20px;
+  margin-top:18px;
+}
+
+input{
+  width:100%;
+  padding:16px;
+  background:#11141a;
+  color:#fff;
+  border:1px solid #414754;
+  border-radius:14px;
+  font-size:17px;
+  outline:none;
+}
+
+input:focus{
+  border-color:#e9a536;
+}
+
+button{
+  width:100%;
+  padding:16px;
+  margin-top:14px;
+  border:0;
+  border-radius:14px;
+  background:#e9a536;
+  color:#111;
+  font-size:17px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.6;
+}
+
+.result{
+  margin-top:18px;
+}
+
+.muted{
+  color:#9da5b4;
+}
+
+.error{
+  background:#24171a;
+  border:1px solid #6b3038;
+  color:#ffb4bb;
+  padding:18px;
+  border-radius:14px;
+}
+
+.resultbox{
+  background:#171a21;
+  border:1px solid #2b303b;
+  border-radius:18px;
+  padding:20px;
+}
+
+.head{
+  margin-bottom:18px;
+}
+
+.head h2{
+  margin:0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.item{
+  background:#11141a;
+  border:1px solid #2b303b;
+  border-radius:12px;
+  padding:13px;
+}
+
+.label{
+  display:block;
+  color:#9da5b4;
+  font-size:12px;
+  margin-bottom:5px;
+}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+  margin:20px 0;
+}
+
+.step{
+  text-align:center;
+  padding:9px 4px;
+  border-radius:10px;
+  background:#222631;
+  color:#8f96a3;
+  font-size:11px;
+}
+
+.step.active{
+  background:#e9a536;
+  color:#111;
+  font-weight:800;
+}
+
+.wa{
+  display:block;
+  text-align:center;
+  margin:18px auto;
+  padding:16px;
+  max-width:460px;
+  border-radius:14px;
+  background:#e9a536;
+  color:#111;
+  font-weight:800;
+  text-decoration:none;
+}
+
+@media(max-width:600px){
+  h1{
+    font-size:36px;
   }
 
-  const cost =
-    cleanNumber(
-      s.cost ?? s.total_cost
-    );
+  .grid{
+    grid-template-columns:1fr;
+  }
 
-  const paid =
-    cleanNumber(s.paid);
+  .steps{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
 
-  const remaining =
-    Math.max(0,cost-paid);
+<body>
 
-  return `
-    <div class="resultbox">
+<div class="wrap">
 
-      <div class="head">
-
-        <div>
-          <h2>
-            ${esc(s.service_no || '')}
-          </h2>
-
-          <div class="muted">
-            ${esc(s.customer_name || '-')}
-          </div>
-        </div>
-
-        <strong>
-          ${esc(status)}
-        </strong>
-
-      </div>
-
-      <div class="steps">
-
-        ${STATUSES.map((x,i)=>`
-          <div class="step ${i<=idx?'active':''}">
-            <div class="dot"></div>
-            <span>${esc(x)}</span>
-          </div>
-        `).join('')}
-
-      </div>
-
-      <div class="grid">
-
-        <div class="item">
-          <span class="label">Pelanggan</span>
-          ${esc(s.customer_name || '-')}
-        </div>
-
-        <div class="item">
-          <span class="label">Gitar</span>
-          ${esc(s.guitar || '-')}
-        </div>
-
-        <div class="item">
-          <span class="label">Status</span>
-          ${esc(status)}
-        </div>
-
-        <div class="item">
-          <span class="label">Biaya</span>
-          ${rupiah(cost)}
-        </div>
-
-        <div class="item">
-          <span class="label">Sudah dibayar</span>
-          ${rupiah(paid)}
-        </div>
-
-        <div class="item">
-          <span class="label">Sisa</span>
-          ${rupiah(remaining)}
-        </div>
-
-      </div>
-
-      <div
-        class="item"
-        style="margin-top:10px"
-      >
-        <span class="label">Keluhan</span>
-        ${esc(s.complaint || '-')}
-      </div>
-
+  <div class="brand">
+    <div class="brandmark">
+      WHY GUITAR
+      <small>Guitar Service</small>
     </div>
-  `;
-}
+  </div>
 
-async function checkStatus(){
+  <h1>Cek Status Gitar</h1>
 
-  const result =
-    document.getElementById('result');
+  <div class="subtitle">
+    Masukkan nomor service yang Anda terima.
+  </div>
 
-  const button =
-    document.getElementById('checkBtn');
+  <section class="card">
 
-  const input =
-    document.getElementById('serviceNo');
+    <input
+      id="serviceNo"
+      placeholder="Contoh: GTR-09-01"
+      autocomplete="off"
+      autocapitalize="characters"
+    >
 
-  const no =
-    input.value.trim();
-
-  if(!no){
-
-    result.innerHTML = `
-      <div class="error">
-        <b>Nomor service belum diisi.</b>
-        <div class="muted" style="margin-top:8px">
-          Masukkan nomor service terlebih dahulu.
-        </div>
-      </div>
-    `;
-
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = 'Memeriksa...';
-
-  result.innerHTML = `
-    <div class="card">
-      <div class="muted">
-        Memeriksa data online...
-      </div>
-    </div>
-  `;
-
-  try{
-
-    const s =
-      await queryService(no);
-
-    if(!s){
-
-      result.innerHTML = `
-        <div class="error">
-          <b>Nomor service tidak ditemukan.</b>
-
-          <div
-            class="muted"
-            style="margin-top:8px"
-          >
-            Periksa kembali kode service Anda.
-          </div>
-        </div>
-      `;
-
-      return;
-    }
-
-    result.innerHTML =
-      renderService(s);
-
-  }catch(e){
-
-    console.error(e);
-
-    result.innerHTML = `
-      <div class="error">
-        <b>Gagal membaca data.</b>
-
-        <div
-          class="muted"
-          style="margin-top:8px"
-        >
-          Silakan coba lagi beberapa saat.
-        </div>
-      </div>
-    `;
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = 'Cek Status';
-
-  }
-}
-
-document
-  .getElementById('serviceNo')
-  .addEventListener('keydown',function(e){
-
-    if(e.key === 'Enter'){
-      checkStatus();
-    }
-
-  });
-
-</script>
-
-</body>
-</html>
+    <
