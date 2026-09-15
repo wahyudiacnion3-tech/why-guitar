@@ -73,13 +73,33 @@ async function cek(){
   const s=data[0];
 
   hasil.innerHTML=`
-  <div class="result">
-   <h2>🎸 ${s.service_no||"-"}</h2>
-   <p><b>Pelanggan:</b> ${s.customer_name||"-"}</p>
-   <p><b>Status:</b> ${s.status||"-"}</p>
-   <p><b>Gitar:</b> ${s.guitar||s.guitar_name||"-"}</p>
-   <p><b>Biaya:</b> Rp ${Number(s.total_cost||s.cost||0).toLocaleString("id-ID")}</p>
-  </div>`;
+<div class="result">
+  <h2>🎸 ${s.service_no || "-"}</h2>
+
+  <p><b>👤 Pelanggan:</b><br>
+  ${s.customer_name || "-"}</p>
+
+  <p><b>🎸 Gitar:</b><br>
+  ${s.guitar_name || "-"}</p>
+
+  <p><b>📌 Status Servis:</b><br>
+  <strong>${s.status || "Diterima"}</strong></p>
+
+  <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+  <p><b>💰 Biaya:</b><br>
+  Rp ${Number(s.total_cost || 0).toLocaleString("id-ID")}</p>
+
+  <a
+    href="https://wa.me/6281258240494"
+    target="_blank"
+    class="wa">
+    💬 Hubungi Why Guitar via WhatsApp
+  </a>
+</div>
+`;
  }catch(e){
   hasil.innerHTML='<div class="result err"><b>Gagal membaca database.</b><br><br>'+e.message+'</div>';
  }
