@@ -2,165 +2,88 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>WHY GUITAR - Cek Status</title>
-
 <style>
-*{
-  box-sizing:border-box;
-}
+body{margin:0;background:#0d0f13;color:white;font-family:Arial;text-align:center}
+.box{max-width:650px;margin:auto;padding:40px 20px}
+h1{font-size:38px;margin:20px 0}
+p{color:#9da5b4;font-size:18px}
+.card{background:#171a21;border:1px solid #30343d;border-radius:20px;padding:20px;margin-top:25px}
+input{width:100%;padding:18px;border-radius:14px;border:2px solid #d9a536;background:#101217;color:white;font-size:20px;box-sizing:border-box}
+button{width:100%;padding:18px;margin-top:15px;border:0;border-radius:14px;background:#d9a536;font-size:19px;font-weight:bold}
+.result{margin-top:20px;padding:20px;background:#171a21;border-radius:20px;text-align:left}
+.err{color:#ff7777}
+</style>
+</head>
 
-body{
-  margin:0;
-  background:#0d0f13;
-  color:#f5f7fb;
-  font-family:Arial,sans-serif;
-}
+<body>
+<div class="box">
 
-.wrap{
-  width:min(760px,100%);
-  margin:auto;
-  padding:28px 20px 55px;
-}
+<b style="font-size:25px;letter-spacing:2px">WHY GUITAR</b>
+<p>Guitar Service</p>
 
-.brand{
-  text-align:center;
-  margin-bottom:30px;
-}
+<h1>Cek Status Gitar</h1>
+<p>Masukkan nomor service yang Anda terima.</p>
 
-.brand b{
-  display:block;
-  font-size:25px;
-  letter-spacing:2px;
-}
+<div class="card">
+<input id="no" placeholder="Contoh: GTR-09-01">
+<button onclick="cek()">🔎 Cek Status</button>
+</div>
 
-.brand small{
-  display:block;
-  color:#9da5b4;
-  font-size:15px;
-  font-weight:bold;
-  margin-top:5px;
-}
+<div id="hasil"></div>
 
-h1{
-  text-align:center;
-  font-size:42px;
-  margin:15px 0 12px;
-}
+</div>
 
-.subtitle{
-  text-align:center;
-  color:#9da5b4;
-  font-size:18px;
-  margin-bottom:25px;
-}
+<script>
+const URL="https://irfjnhzrfeqqobhbntzu.supabase.co";
+const KEY="sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1";
 
-.card{
-  background:#171a21;
-  border:1px solid #2b303b;
-  border-radius:20px;
-  padding:20px;
-  margin-top:18px;
-}
+async function cek(){
+ const no=document.getElementById("no").value.trim();
+ const hasil=document.getElementById("hasil");
 
-input{
-  width:100%;
-  padding:18px;
-  border-radius:15px;
-  border:2px solid #d9a536;
-  background:#101217;
-  color:#fff;
-  font-size:20px;
-  outline:none;
-}
+ if(!no){
+  hasil.innerHTML='<div class="result err">Masukkan nomor service.</div>';
+  return;
+ }
 
-button{
-  width:100%;
-  margin-top:15px;
-  padding:17px;
-  border:0;
-  border-radius:15px;
-  background:#d9a536;
-  color:#111;
-  font-size:19px;
-  font-weight:bold;
-  cursor:pointer;
-}
+ hasil.innerHTML='<div class="result">⏳ Memeriksa data...</div>';
 
-button:disabled{
-  opacity:.6;
-}
+ try{
+  const r=await fetch(
+   URL+"/rest/v1/services?service_no=eq."+encodeURIComponent(no)+"&select=*",
+   {
+    headers:{
+     apikey:KEY,
+     Authorization:"Bearer "+KEY
+    }
+   }
+  );
 
-.wa{
-  display:block;
-  text-align:center;
-  margin:18px auto 0;
-  padding:15px;
-  border-radius:15px;
-  background:#d9a536;
-  color:#111;
-  text-decoration:none;
-  font-size:18px;
-  font-weight:bold;
-}
+  if(!r.ok) throw new Error("HTTP "+r.status);
 
-.resultbox{
-  background:#171a21;
-  border:1px solid #2b303b;
-  border-radius:20px;
-  padding:22px;
-  margin-top:20px;
-}
+  const data=await r.json();
 
-.resultbox h2{
-  margin-top:0;
-  font-size:25px;
-}
+  if(!data.length){
+   hasil.innerHTML='<div class="result err"><b>Nomor service tidak ditemukan.</b><br><br>Periksa kembali nomor service.</div>';
+   return;
+  }
 
-.status{
-  display:inline-block;
-  padding:10px 15px;
-  border-radius:30px;
-  background:#d9a536;
-  color:#111;
-  font-weight:bold;
-  margin:8px 0 18px;
-}
+  const s=data[0];
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
+  hasil.innerHTML=`
+  <div class="result">
+   <h2>🎸 ${s.service_no||"-"}</h2>
+   <p><b>Pelanggan:</b> ${s.customer_name||"-"}</p>
+   <p><b>Status:</b> ${s.status||"-"}</p>
+   <p><b>Gitar:</b> ${s.guitar||s.guitar_name||"-"}</p>
+   <p><b>Biaya:</b> Rp ${Number(s.total_cost||s.cost||0).toLocaleString("id-ID")}</p>
+  </div>`;
+ }catch(e){
+  hasil.innerHTML='<div class="result err"><b>Gagal membaca database.</b><br><br>'+e.message+'</div>';
+ }
 }
-
-.item{
-  background:#101217;
-  border:1px solid #2b303b;
-  border-radius:12px;
-  padding:14px;
-}
-
-.label{
-  display:block;
-  color:#9da5b4;
-  font-size:13px;
-  margin-bottom:6px;
-}
-
-.value{
-  font-size:17px;
-  font-weight:bold;
-  word-break:break-word;
-}
-
-.error{
-  background:#32191c;
-  border:1px solid #8f3038;
-  color:#fff;
-  border-radius:15px;
-  padding:18px;
-  margin-top:20px;
-}
-
-.muted{
-  color:#9da5b
+</script>
+</body>
+</html>
