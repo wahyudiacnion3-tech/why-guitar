@@ -4,165 +4,123 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WHY GUITAR - Cek Status</title>
-
-<style>
-body{
-  margin:0;
-  padding:20px;
-  font-family:Arial,sans-serif;
-  background:#f3f3f3;
-  color:#222;
-}
-.box{
-  max-width:600px;
-  margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:18px;
-  box-shadow:0 4px 15px #ddd;
-}
-h1{text-align:center}
-p{line-height:1.6}
-input{
-  width:100%;
-  padding:15px;
-  box-sizing:border-box;
-  border:1px solid #ccc;
-  border-radius:10px;
-  font-size:16px;
-}
-button{
-  width:100%;
-  padding:15px;
-  margin-top:12px;
-  border:0;
-  border-radius:10px;
-  background:#111;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-}
-.result{
-  margin-top:20px;
-}
-.data{
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-}
-.photo{
-  margin-top:20px;
-}
-.photo img{
-  width:100%;
-  border-radius:12px;
-  margin-top:8px;
-}
-.error{
-  padding:15px;
-  background:#ffecec;
-  border-radius:10px;
-}
-</style>
 </head>
 
 <body>
 
-<div class="box">
-
 <h1>🎸 WHY GUITAR</h1>
 
-<p style="text-align:center">
-Cek Status Service Gitar
-</p>
+<h2>Cek Status Gitar</h2>
 
-<input
- id="serviceNo"
- placeholder="Masukkan Nomor Service"
->
+<p>Masukkan nomor service:</p>
 
-<button onclick="cek()">
-🔍 CEK STATUS
-</button>
+<input id="serviceNo" placeholder="Contoh: GTR/SQ/09/01">
 
-<div id="hasil" class="result"></div>
+<button onclick="cekStatus()">CEK STATUS</button>
 
-</div>
+<div id="hasil"></div>
 
 <script>
 
-const URL =
-'https://irfjnhzrfeqqobhbntzu.supabase.co';
+const SUPABASE_URL =
+"https://irfjnhzrfeqqobhbntzu.supabase.co";
 
-const KEY =
-'sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1';
+const SUPABASE_KEY =
+"sb_publishable_XbSV_b9aa10bIWE8YqAU8YqauBw_KPypPIe1";
 
-function esc(x){
- return String(x ?? '-')
- .replace(/[&<>"']/g,function(c){
-  return {
-   '&':'&amp;',
-   '<':'&lt;',
-   '>':'&gt;',
-   '"':'&quot;',
-   "'":'&#39;'
-  }[c];
- });
+async function cekStatus(){
+
+    const no = document
+        .getElementById("serviceNo")
+        .value
+        .trim();
+
+    const hasil = document
+        .getElementById("hasil");
+
+    if(!no){
+        hasil.innerHTML =
+        "<p>Masukkan nomor service dulu.</p>";
+        return;
+    }
+
+    hasil.innerHTML =
+    "<p>⏳ Mencari data...</p>";
+
+    try{
+
+        const response = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/services?service_no=eq." +
+            encodeURIComponent(no) +
+            "&select=*",
+            {
+                headers:{
+                    "apikey":SUPABASE_KEY,
+                    "Authorization":"Bearer " + SUPABASE_KEY
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.length){
+
+            hasil.innerHTML =
+            "<p>❌ Nomor service tidak ditemukan.</p>";
+
+            return;
+        }
+
+        const s = data[0];
+
+        hasil.innerHTML = `
+            <hr>
+            <h2>🎸 Data Service</h2>
+
+            <p>
+            <b>No. Service:</b><br>
+            ${s.service_no || "-"}
+            </p>
+
+            <p>
+            <b>Customer:</b><br>
+            ${s.customer_name || "-"}
+            </p>
+
+            <p>
+            <b>Gitar:</b><br>
+            ${s.guitar || "-"}
+            </p>
+
+            <p>
+            <b>Status:</b><br>
+            ${s.status || "-"}
+            </p>
+
+            <p>
+            <b>Keluhan:</b><br>
+            ${s.complaint || "-"}
+            </p>
+
+            <p>
+            <b>Biaya:</b><br>
+            Rp ${Number(s.cost || 0).toLocaleString("id-ID")}
+            </p>
+        `;
+
+    }catch(error){
+
+        console.log(error);
+
+        hasil.innerHTML =
+        "<p>❌ Gagal terhubung ke server.</p>";
+
+    }
+
 }
 
-function rupiah(x){
- return 'Rp ' + Number(x || 0)
- .toLocaleString('id-ID');
-}
+</script>
 
-async function cek(){
-
- const no =
- document.getElementById('serviceNo')
- .value.trim();
-
- const hasil =
- document.getElementById('hasil');
-
- if(!no){
-  hasil.innerHTML =
-  '<div class="error">Masukkan nomor service.</div>';
-  return;
- }
-
- hasil.innerHTML='⏳ Mencari data...';
-
- try{
-
-  const url =
-  URL +
-  '/rest/v1/services' +
-  '?select=*' +
-  '&service_no=eq.' +
-  encodeURIComponent(no) +
-  '&limit=1';
-
-  const r=await fetch(url,{
-   headers:{
-    apikey:KEY,
-    Authorization:'Bearer '+KEY
-   }
-  });
-
-  if(!r.ok)
-   throw new Error('Gagal');
-
-  const data=await r.json();
-
-  if(!data.length){
-   hasil.innerHTML=
-   '<div class="error">❌ Nomor service tidak ditemukan.</div>';
-   return;
-  }
-
-  const s=data[0];
-
-  let foto='';
-
-  try{
-
-   const
+</body>
+</html>
