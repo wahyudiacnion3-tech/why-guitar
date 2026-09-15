@@ -97,7 +97,7 @@ const guitar =
   s.guitar_model ||
   "-";
 
-const biaya = Number(s.total_cost || 0).toLocaleString("id-ID");
+const biaya = s.estimate || "Rp 0";
 
 hasil.innerHTML = `
 <div class="result">
