@@ -497,6 +497,57 @@ function renderPhotos(service){
 ========================= */
 
 function renderService(s){
+  result.innerHTML = `
+    <div class="resultbox">
+      <h3>🎸 Data Service</h3>
+
+      <p><b>No. Service:</b> ${esc(s.service_no || '-')}</p>
+      <p><b>Customer:</b> ${esc(s.customer_name || '-')}</p>
+      <p><b>Gitar:</b> ${esc(s.guitar || '-')}</p>
+      <p><b>Status:</b> ${esc(s.status || '-')}</p>
+      <p><b>Keluhan:</b> ${esc(s.complaint || '-')}</p>
+      <p><b>Biaya:</b> ${esc(s.cost || '-')}</p>
+      <p><b>Sudah Dibayar:</b> ${esc(s.paid || '-')}</p>
+
+      ${
+        s.photo_url ? `
+        <div class="photos">
+          <h3>📸 Dokumentasi Service</h3>
+
+          ${
+            (() => {
+              try {
+                const p = typeof s.photo_url === 'string'
+                  ? JSON.parse(s.photo_url)
+                  : s.photo_url;
+
+                return `
+                  ${p.before ? `
+                    <div class="photo-box">
+                      <b>📷 Foto Sebelum Service</b>
+                      <img src="${p.before}">
+                    </div>
+                  ` : ''}
+
+                  ${p.after ? `
+                    <div class="photo-box">
+                      <b>📷 Foto Sesudah Service</b>
+                      <img src="${p.after}">
+                    </div>
+                  ` : ''}
+                `;
+              } catch(e) {
+                return '';
+              }
+            })()
+          }
+        </div>
+        ` : ''
+      }
+
+    </div>
+  `;
+}
 
  const status=
    String(s.status||'Diterima');
