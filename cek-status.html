@@ -6,111 +6,189 @@
 <title>Why Guitar - Cek Status</title>
 
 <style>
+*{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f3f3f3;
-  padding:20px;
+  background:#111;
+  color:#fff;
 }
-.box{
-  max-width:500px;
+
+.container{
+  max-width:520px;
   margin:auto;
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 3px 15px #ccc;
+  padding:25px 18px;
 }
-h1{text-align:center}
+
+.card{
+  background:#1d1d1d;
+  border-radius:16px;
+  padding:22px;
+  margin-bottom:18px;
+}
+
+h1{
+  text-align:center;
+  margin:5px 0 8px;
+}
+
+.sub{
+  text-align:center;
+  color:#aaa;
+  margin-bottom:20px;
+}
+
 input{
   width:100%;
   padding:14px;
+  border-radius:10px;
+  border:1px solid #555;
+  background:#fff;
+  color:#111;
   font-size:16px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  box-sizing:border-box;
 }
+
 button{
   width:100%;
   padding:14px;
   margin-top:10px;
-  background:#111;
-  color:white;
   border:0;
-  border-radius:8px;
-  font-size:16px;
-}
-.info{
-  background:#f7f7f7;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-}
-.label{
-  color:#777;
-  font-size:13px;
-}
-.value{
-  font-weight:bold;
-  margin-top:4px;
-}
-.status{
-  text-align:center;
-  padding:14px;
-  margin-top:15px;
-  background:#e8f5e9;
-  border-radius:8px;
-  font-weight:bold;
-}
-.progress{
-  height:12px;
-  background:#ddd;
   border-radius:10px;
-  margin-top:8px;
-  overflow:hidden;
+  background:#fff;
+  color:#111;
+  font-size:16px;
+  font-weight:bold;
 }
+
+.result{
+  margin-top:20px;
+}
+
+.item{
+  background:#252525;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+
+.no{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.muted{
+  color:#aaa;
+  margin-top:5px;
+}
+
+.pill{
+  background:#fff;
+  color:#111;
+  padding:7px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.detail{
+  margin-top:14px;
+  line-height:1.8;
+  border-top:1px solid #444;
+  padding-top:12px;
+}
+
+.progress{
+  height:10px;
+  background:#444;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:8px;
+}
+
 .bar{
   height:100%;
-  background:#111;
+  background:#fff;
 }
-.error{
-  color:red;
+
+.err{
   text-align:center;
-  margin-top:15px;
+  color:#ff7777;
+  padding:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-<h1>WHY GUITAR</h1>
-<p style="text-align:center;color:#777">
-Cek Status Servis Gitar
-</p>
+  <div class="card">
 
-<input
-  id="serviceNo"
-  type="text"
-  placeholder="Masukkan No. Servis"
->
+    <h1>WHY GUITAR</h1>
 
-<button onclick="cekStatus()">CEK STATUS</button>
+    <div class="sub">
+      Cek Status Servis Gitar
+    </div>
 
-<div id="hasil"></div>
+    <input
+      id="serviceNo"
+      placeholder="Contoh: GTR-09-01"
+      autocomplete="off"
+    >
+
+    <button onclick="checkStatus()">
+      Cek Status →
+    </button>
+
+    <div id="statusResult" class="result"></div>
+
+  </div>
 
 </div>
 
 <script>
 
-const SUPABASE_URL =
-"https://irfjnhzrfeqqobhntzu.supabase.co";
+const SUPA = {
+  url: "https://irfjnhzrfeqqobhntzu.supabase.co",
+  key: "sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1"
+};
 
-const SUPABASE_KEY =
-"sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1";
+
+async function getData(no){
+
+  const url =
+    SUPA.url +
+    "/rest/v1/services" +
+    "?service_no=eq." +
+    encodeURIComponent(no) +
+    "&select=*";
+
+  const response = await fetch(url,{
+    method:"GET",
+    headers:{
+      "apikey":SUPA.key
+    }
+  });
+
+  if(!response.ok){
+    const errorText = await response.text();
+    console.log("SUPABASE ERROR:",errorText);
+    throw new Error("Database error");
+  }
+
+  return await response.json();
+}
 
 
-function formatBiaya(value){
+function formatMoney(value){
 
   if(value === null || value === undefined || value === ""){
     return "Belum ditentukan";
@@ -118,11 +196,11 @@ function formatBiaya(value){
 
   let text = String(value).trim();
 
-  if(text.toLowerCase().startsWith("rp")){
+  if(/^rp/i.test(text)){
     text = text.replace(/^rp\.?\s*/i,"");
   }
 
-  let angka = text.replace(/[^\d]/g,"");
+  const angka = text.replace(/[^\d]/g,"");
 
   if(angka){
     return "Rp " + Number(angka).toLocaleString("id-ID");
@@ -132,9 +210,9 @@ function formatBiaya(value){
 }
 
 
-function progressStatus(status){
+function progress(status){
 
-  let s = String(status).toLowerCase();
+  const s = String(status || "").toLowerCase();
 
   if(s.includes("selesai")) return 100;
   if(s.includes("siap")) return 90;
@@ -146,100 +224,127 @@ function progressStatus(status){
 }
 
 
-async function cekStatus(){
+function escapeHTML(value){
 
-  const nomor =
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+async function checkStatus(){
+
+  const no =
     document.getElementById("serviceNo").value.trim();
 
-  const hasil =
-    document.getElementById("hasil");
+  const out =
+    document.getElementById("statusResult");
 
-  if(!nomor){
-    hasil.innerHTML =
-    '<div class="error">Masukkan No. Servis terlebih dahulu.</div>';
+  if(!no){
+
+    out.innerHTML =
+      '<div class="err">Masukkan nomor service dulu.</div>';
+
     return;
   }
 
-  hasil.innerHTML = "Mencari data...";
+  out.innerHTML = "Memuat data...";
 
   try{
 
-    const url =
-      SUPABASE_URL +
-      "/rest/v1/services" +
-      "?service_no=eq." +
-      encodeURIComponent(nomor) +
-      "&select=service_no,customer_name,guitar,status,technician,estimate";
+    const data = await getData(no);
 
-    const response = await fetch(url,{
-      method:"GET",
-      headers:{
-        "apikey":SUPABASE_KEY
-      }
-    });
-
-    const data = await response.json();
-
-    console.log("DATA SUPABASE:",data);
-
-    if(!response.ok){
-      throw new Error(
-        data.message || "Database tidak dapat diakses"
-      );
-    }
+    console.log("DATA:",data);
 
     if(!data || data.length === 0){
 
-      hasil.innerHTML =
-      '<div class="error">No. Servis tidak ditemukan.</div>';
+      out.innerHTML =
+        '<div class="err">Nomor service tidak ditemukan.</div>';
 
       return;
     }
 
-    const s = data[0];
+    const x = data[0];
 
-    const persen =
-      progressStatus(s.status);
+    const status = x.status || "-";
+    const persen = progress(status);
 
-    hasil.innerHTML = `
+    /*
+      Kolom database:
+      service_no
+      customer_name
+      guitar
+      status
+      technician
+      estimate
+    */
 
-      <div class="info">
-        <div class="label">No. Servis</div>
-        <div class="value">${s.service_no || "-"}</div>
-      </div>
+    out.innerHTML = `
 
-      <div class="info">
-        <div class="label">Customer</div>
-        <div class="value">${s.customer_name || "-"}</div>
-      </div>
+      <div class="item">
 
-      <div class="info">
-        <div class="label">Gitar</div>
-        <div class="value">${s.guitar || "-"}</div>
-      </div>
+        <div class="row">
 
-      <div class="status">
-        Status: ${s.status || "-"}
-      </div>
+          <div>
+            <div class="no">
+              ${escapeHTML(x.service_no || "-")}
+            </div>
 
-      <div class="label" style="margin-top:15px">
-        Progress Servis
-      </div>
+            <div class="muted">
+              ${escapeHTML(x.customer_name || "")}
+              ·
+              ${escapeHTML(x.guitar || "")}
+            </div>
+          </div>
 
-      <div class="progress">
-        <div class="bar" style="width:${persen}%"></div>
-      </div>
+          <span class="pill">
+            ${escapeHTML(status)}
+          </span>
 
-      <div class="info">
-        <div class="label">Teknisi</div>
-        <div class="value">${s.technician || "-"}</div>
-      </div>
-
-      <div class="info">
-        <div class="label">Estimasi Biaya</div>
-        <div class="value">
-          ${formatBiaya(s.estimate)}
         </div>
+
+
+        <div class="detail">
+
+          Pelanggan:
+          <b>${escapeHTML(x.customer_name || "-")}</b>
+
+          <br>
+
+          Gitar:
+          <b>${escapeHTML(x.guitar || "-")}</b>
+
+          <br>
+
+          Teknisi:
+          <b>${escapeHTML(x.technician || "-")}</b>
+
+          <br>
+
+          Estimasi Biaya:
+          <b>${formatMoney(x.estimate)}</b>
+
+        </div>
+
+
+        <div class="detail">
+
+          Progress Servis
+
+          <div class="progress">
+
+            <div
+              class="bar"
+              style="width:${persen}%"
+            ></div>
+
+          </div>
+
+        </div>
+
       </div>
 
     `;
@@ -248,21 +353,23 @@ async function cekStatus(){
 
     console.error(error);
 
-    hasil.innerHTML =
-    '<div class="error">Gagal mengambil data dari database.</div>';
+    out.innerHTML =
+      '<div class="err">Terjadi kesalahan saat mengambil data.</div>';
+
   }
+
 }
 
 
 document
-.getElementById("serviceNo")
-.addEventListener("keydown",function(e){
+  .getElementById("serviceNo")
+  .addEventListener("keydown",function(e){
 
-  if(e.key === "Enter"){
-    cekStatus();
-  }
+    if(e.key === "Enter"){
+      checkStatus();
+    }
 
-});
+  });
 
 </script>
 
