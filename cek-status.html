@@ -109,6 +109,277 @@ async function history(){
 document.getElementById('checkBtn').onclick=checkStatus;
 document.getElementById('historyBtn').onclick=history;
 document.getElementById('serviceNo').addEventListener('keydown',e=>{if(e.key==='Enter')checkStatus()});
+<script>
+const SUPABASE_URL='https://irfjnhzrfeqqobhbntzu.supabase.co';
+const SUPABASE_KEY='sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1';
+
+const STATUSES=[
+'Diterima',
+'Sedang diperiksa',
+'Menunggu persetujuan',
+'Sedang dikerjakan',
+'Quality control',
+'Selesai / siap diambil'
+];
+
+function esc(v){
+  return String(v ?? '').replace(/[&<>"']/g,m=>({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#039;'
+  }[m]));
+}
+
+function norm(v){
+  return String(v || '').trim().toUpperCase();
+}
+
+function rupiah(v){
+  const n=Number(v || 0);
+  return Number.isFinite(n)
+    ? 'Rp '+n.toLocaleString('id-ID')
+    : '-';
+}
+
+async function queryService(no){
+  const clean=norm(no);
+
+  if(!clean) return null;
+
+  const url =
+    SUPABASE_URL +
+    '/rest/v1/services?service_no=eq.' +
+    encodeURIComponent(clean) +
+    '&select=*&limit=1';
+
+  const res=await fetch(url,{
+    method:'GET',
+    headers:{
+      'apikey':SUPABASE_KEY,
+      'Authorization':'Bearer '+SUPABASE_KEY,
+      'Accept':'application/json'
+    }
+  });
+
+  if(!res.ok){
+    const text=await res.text();
+    throw new Error('Database HTTP '+res.status+' '+text);
+  }
+
+  const rows=await res.json();
+  return rows[0] || null;
+}
+
+function renderService(s){
+  const status=String(s.status || 'Diterima');
+
+  let idx=STATUSES.findIndex(
+    x=>x.toLowerCase()===status.toLowerCase()
+  );
+
+  if(idx<0){
+    idx=Math.max(
+      0,
+      Math.min(
+        5,
+        Math.round(Number(s.progress || 0)/20)
+      )
+    );
+  }
+
+  const cost=Number(s.cost || s.total_cost || 0);
+  const paid=Number(s.paid || 0);
+  const remaining=Math.max(0,cost-paid);
+
+  return `
+  <div class="resultbox">
+
+    <div class="head">
+      <div>
+        <h2 style="margin:0">
+          ${esc(s.service_no || '-')}
+        </h2>
+
+        <div class="muted">
+          ${esc(s.customer_name || s.customer || '-')}
+          ·
+          ${esc(s.guitar || '-')}
+        </div>
+      </div>
+
+      <span class="badge">
+        ${esc(status)}
+      </span>
+    </div>
+
+    <div class="steps">
+      ${STATUSES.map((_,i)=>
+        `<div class="step ${i<=idx?'on':''}"></div>`
+      ).join('')}
+    </div>
+
+    <div class="grid">
+
+      <div class="item">
+        <span class="label">Pelanggan</span>
+        ${esc(s.customer_name || '-')}
+      </div>
+
+      <div class="item">
+        <span class="label">Gitar</span>
+        ${esc(s.guitar || '-')}
+      </div>
+
+      <div class="item">
+        <span class="label">Status</span>
+        ${esc(status)}
+      </div>
+
+      <div class="item">
+        <span class="label">Biaya</span>
+        ${rupiah(cost)}
+      </div>
+
+      <div class="item">
+        <span class="label">Sudah dibayar</span>
+        ${rupiah(paid)}
+      </div>
+
+      <div class="item">
+        <span class="label">Sisa</span>
+        ${remaining ? rupiah(remaining) : 'LUNAS'}
+      </div>
+
+    </div>
+
+    <div class="item" style="margin-top:10px">
+      <span class="label">Keluhan</span>
+      ${esc(s.complaint || '-')}
+    </div>
+
+  </div>`;
+}
+
+async function checkStatus(){
+
+  const r=document.getElementById('result');
+
+  r.innerHTML=
+    '<div class="muted">Memeriksa data online...</div>';
+
+  try{
+
+    const nomor=
+      document.getElementById('serviceNo').value;
+
+    if(!norm(nomor)){
+      r.innerHTML=
+        '<div class="error"><b>Masukkan nomor service terlebih dahulu.</b></div>';
+      return;
+    }
+
+    const s=await queryService(nomor);
+
+    if(!s){
+      r.innerHTML=
+        '<div class="error"><b>Nomor service tidak ditemukan.</b><br>Periksa kembali kode service Anda.</div>';
+      return;
+    }
+
+    r.innerHTML=renderService(s);
+
+  }catch(e){
+
+    console.error(e);
+
+    r.innerHTML=
+      '<div class="error"><b>Gagal membaca database.</b><br>'+
+      esc(e.message)+
+      '</div>';
+  }
+}
+
+async function history(){
+
+  const r=document.getElementById('historyResult');
+
+  const no=norm(
+    document.getElementById('historyNo').value
+  );
+
+  const phone=
+    document.getElementById('phone').value.trim();
+
+  r.innerHTML=
+    '<div class="muted">Memeriksa riwayat online...</div>';
+
+  if(!no || !phone){
+
+    r.innerHTML=
+      '<div class="error">Isi nomor WhatsApp dan nomor service.</div>';
+
+    return;
+  }
+
+  try{
+
+    const s=await queryService(no);
+
+    if(!s){
+
+      r.innerHTML=
+        '<div class="error"><b>Nomor service tidak ditemukan.</b></div>';
+
+      return;
+    }
+
+    const dbPhone=
+      String(s.phone || '').replace(/\D/g,'');
+
+    const inPhone=
+      phone.replace(/\D/g,'');
+
+    if(
+      dbPhone &&
+      inPhone &&
+      !dbPhone.endsWith(inPhone) &&
+      !inPhone.endsWith(dbPhone)
+    ){
+
+      r.innerHTML=
+        '<div class="error"><b>Data tidak cocok.</b><br>Nomor WhatsApp tidak sesuai dengan service tersebut.</div>';
+
+      return;
+    }
+
+    r.innerHTML=renderService(s);
+
+  }catch(e){
+
+    console.error(e);
+
+    r.innerHTML=
+      '<div class="error"><b>Gagal membaca database.</b><br>'+
+      esc(e.message)+
+      '</div>';
+  }
+}
+
+document
+  .getElementById('checkBtn')
+  .addEventListener('click',checkStatus);
+
+document
+  .getElementById('historyBtn')
+  .addEventListener('click',history);
+
+document
+  .getElementById('serviceNo')
+  .addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      checkStatus();
+    }
+  });
 </script>
-</body>
-</html>
