@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>WHY GUITAR - Cek Status</title>
 
 <style>
@@ -15,7 +14,7 @@ body{
   margin:0;
   background:#0d0f13;
   color:#f5f7fb;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
 }
 
 .wrap{
@@ -26,69 +25,65 @@ body{
 
 .brand{
   text-align:center;
-  margin-bottom:34px;
+  margin-bottom:30px;
 }
 
-.brandmark{
-  display:inline-block;
-  font-weight:800;
-  letter-spacing:1px;
-  font-size:18px;
+.brand b{
+  display:block;
+  font-size:25px;
+  letter-spacing:2px;
 }
 
-.brandmark small{
+.brand small{
   display:block;
   color:#9da5b4;
-  font-size:12px;
-  margin-top:3px;
+  font-size:15px;
+  font-weight:bold;
+  margin-top:5px;
 }
 
 h1{
   text-align:center;
   font-size:42px;
-  margin:0 0 12px;
+  margin:15px 0 12px;
 }
 
 .subtitle{
   text-align:center;
   color:#9da5b4;
-  font-size:17px;
+  font-size:18px;
   margin-bottom:25px;
 }
 
 .card{
   background:#171a21;
   border:1px solid #2b303b;
-  border-radius:18px;
+  border-radius:20px;
   padding:20px;
   margin-top:18px;
 }
 
 input{
   width:100%;
-  padding:16px;
-  background:#11141a;
+  padding:18px;
+  border-radius:15px;
+  border:2px solid #d9a536;
+  background:#101217;
   color:#fff;
-  border:1px solid #414754;
-  border-radius:14px;
-  font-size:17px;
+  font-size:20px;
   outline:none;
-}
-
-input:focus{
-  border-color:#e9a536;
 }
 
 button{
   width:100%;
-  padding:16px;
-  margin-top:14px;
+  margin-top:15px;
+  padding:17px;
   border:0;
-  border-radius:14px;
-  background:#e9a536;
+  border-radius:15px;
+  background:#d9a536;
   color:#111;
-  font-size:17px;
-  font-weight:800;
+  font-size:19px;
+  font-weight:bold;
   cursor:pointer;
 }
 
@@ -96,132 +91,76 @@ button:disabled{
   opacity:.6;
 }
 
-.result{
-  margin-top:18px;
-}
-
-.muted{
-  color:#9da5b4;
-}
-
-.error{
-  background:#24171a;
-  border:1px solid #6b3038;
-  color:#ffb4bb;
-  padding:18px;
-  border-radius:14px;
+.wa{
+  display:block;
+  text-align:center;
+  margin:18px auto 0;
+  padding:15px;
+  border-radius:15px;
+  background:#d9a536;
+  color:#111;
+  text-decoration:none;
+  font-size:18px;
+  font-weight:bold;
 }
 
 .resultbox{
   background:#171a21;
   border:1px solid #2b303b;
-  border-radius:18px;
-  padding:20px;
+  border-radius:20px;
+  padding:22px;
+  margin-top:20px;
 }
 
-.head{
-  margin-bottom:18px;
+.resultbox h2{
+  margin-top:0;
+  font-size:25px;
 }
 
-.head h2{
-  margin:0;
+.status{
+  display:inline-block;
+  padding:10px 15px;
+  border-radius:30px;
+  background:#d9a536;
+  color:#111;
+  font-weight:bold;
+  margin:8px 0 18px;
 }
 
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:12px;
 }
 
 .item{
-  background:#11141a;
+  background:#101217;
   border:1px solid #2b303b;
   border-radius:12px;
-  padding:13px;
+  padding:14px;
 }
 
 .label{
   display:block;
   color:#9da5b4;
-  font-size:12px;
-  margin-bottom:5px;
+  font-size:13px;
+  margin-bottom:6px;
 }
 
-.steps{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-  margin:20px 0;
+.value{
+  font-size:17px;
+  font-weight:bold;
+  word-break:break-word;
 }
 
-.step{
-  text-align:center;
-  padding:9px 4px;
-  border-radius:10px;
-  background:#222631;
-  color:#8f96a3;
-  font-size:11px;
+.error{
+  background:#32191c;
+  border:1px solid #8f3038;
+  color:#fff;
+  border-radius:15px;
+  padding:18px;
+  margin-top:20px;
 }
 
-.step.active{
-  background:#e9a536;
-  color:#111;
-  font-weight:800;
-}
-
-.wa{
-  display:block;
-  text-align:center;
-  margin:18px auto;
-  padding:16px;
-  max-width:460px;
-  border-radius:14px;
-  background:#e9a536;
-  color:#111;
-  font-weight:800;
-  text-decoration:none;
-}
-
-@media(max-width:600px){
-  h1{
-    font-size:36px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .steps{
-    grid-template-columns:1fr;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<div class="wrap">
-
-  <div class="brand">
-    <div class="brandmark">
-      WHY GUITAR
-      <small>Guitar Service</small>
-    </div>
-  </div>
-
-  <h1>Cek Status Gitar</h1>
-
-  <div class="subtitle">
-    Masukkan nomor service yang Anda terima.
-  </div>
-
-  <section class="card">
-
-    <input
-      id="serviceNo"
-      placeholder="Contoh: GTR-09-01"
-      autocomplete="off"
-      autocapitalize="characters"
-    >
-
-    <
+.muted{
+  color:#9da5b
