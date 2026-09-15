@@ -1,174 +1,319 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WHY GUITAR - Cek Status</title>
-<style>
-body{margin:0;background:#0d0f13;color:white;font-family:Arial;text-align:center}
-.box{max-width:650px;margin:auto;padding:40px 20px}
-h1{font-size:38px;margin:20px 0}
-p{color:#9da5b4;font-size:18px}
-.card{background:#171a21;border:1px solid #30343d;border-radius:20px;padding:20px;margin-top:25px}
-input{width:100%;padding:18px;border-radius:14px;border:2px solid #d9a536;background:#101217;color:white;font-size:20px;box-sizing:border-box}
-button{width:100%;padding:18px;margin-top:15px;border:0;border-radius:14px;background:#d9a536;font-size:19px;font-weight:bold}
-.result{margin-top:20px;padding:20px;background:#171a21;border-radius:20px;text-align:left}
-.err{color:#ff7777}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cek Status Servis - Why Guitar</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #hasil {
+      margin-top: 20px;
+    }
+
+    .info {
+      background: #f7f7f7;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .label {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .status {
+      padding: 14px;
+      border-radius: 10px;
+      background: #e9f7ef;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .progress {
+      height: 12px;
+      background: #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 10px 0 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #111;
+      transition: width 0.5s;
+    }
+
+    .wa {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: #25D366;
+      color: white;
+      padding: 13px;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #c00;
+      text-align: center;
+      padding: 15px;
+    }
+  </style>
 </head>
 
 <body>
-<div class="box">
 
-<b style="font-size:25px;letter-spacing:2px">WHY GUITAR</b>
-<p>Guitar Service</p>
+  <div class="container">
+    <div class="card">
 
-<h1>Cek Status Gitar</h1>
-<p>Masukkan nomor service yang Anda terima.</p>
+      <h1>WHY GUITAR</h1>
+      <div class="subtitle">Cek Status Servis Gitar</div>
 
-<div class="card">
-<input id="no" placeholder="Contoh: GTR-09-01">
-<button onclick="cek()">🔎 Cek Status</button>
-</div>
+      <input
+        type="text"
+        id="serviceNo"
+        placeholder="Masukkan No. Servis"
+        autocomplete="off"
+      >
 
-<div id="hasil"></div>
+      <button onclick="cekStatus()">CEK STATUS</button>
 
-</div>
+      <div id="hasil"></div>
 
-<script>
-const URL="https://irfjnhzrfeqqobhbntzu.supabase.co";
-const KEY="sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1";
+    </div>
+  </div>
 
-async function cek(){
- const no=document.getElementById("no").value.trim();
- const hasil=document.getElementById("hasil");
+  <script>
+    const SUPABASE_URL = "https://irfjnhzrfeqqobhntzu.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1";
 
- if(!no){
-  hasil.innerHTML='<div class="result err">Masukkan nomor service.</div>';
-  return;
- }
+    function formatMoney(value) {
+      if (value === null || value === undefined || value === "") {
+        return "Belum ditentukan";
+      }
 
- hasil.innerHTML='<div class="result">⏳ Memeriksa data...</div>';
+      if (typeof value === "number") {
+        return "Rp " + value.toLocaleString("id-ID");
+      }
 
- try{
-  const r=await fetch(
-   URL+"/rest/v1/services?service_no=eq."+encodeURIComponent(no)+"&select=*",
-   {
-    headers:{
-     apikey:KEY,
-     Authorization:"Bearer "+KEY
+      let text = String(value).trim();
+
+      if (/^rp/i.test(text)) {
+        text = text.replace(/^rp\.?\s*/i, "");
+      }
+
+      const angka = text.replace(/[^\d]/g, "");
+
+      if (angka) {
+        return "Rp " + Number(angka).toLocaleString("id-ID");
+      }
+
+      return value;
     }
-   }
-  );
 
-  if(!r.ok) throw new Error("HTTP "+r.status);
+    function getProgress(status) {
+      const s = String(status || "").toLowerCase();
 
-  const data=await r.json();
+      if (s.includes("selesai")) return 100;
+      if (s.includes("siap")) return 90;
+      if (s.includes("dikerjakan")) return 70;
+      if (s.includes("diperiksa")) return 40;
+      if (s.includes("masuk")) return 20;
 
-  if(!data.length){
-   hasil.innerHTML='<div class="result err"><b>Nomor service tidak ditemukan.</b><br><br>Periksa kembali nomor service.</div>';
-   return;
-  }
+      return 10;
+    }
 
-   const s = data[0];
+    async function cekStatus() {
 
-const status = String(s.status || "Diterima").trim();
+      const serviceNo = document
+        .getElementById("serviceNo")
+        .value
+        .trim();
 
-const statusList = [
-  "Diterima",
-  "Sedang diperiksa",
-  "Dikerjakan",
-  "Selesai",
-  "Diambil"
-];
+      const hasil = document.getElementById("hasil");
 
-let statusIndex = statusList.findIndex(
-  x => x.toLowerCase() === status.toLowerCase()
-);
+      if (!serviceNo) {
+        hasil.innerHTML =
+          '<div class="error">Silakan masukkan No. Servis.</div>';
+        return;
+      }
 
-if (statusIndex < 0) statusIndex = 0;
+      hasil.innerHTML = "Sedang mencari data...";
 
-const progress = ((statusIndex + 1) / statusList.length) * 100;
+      try {
 
-const guitar =
-  s.guitar_name ||
-  s.guitar ||
-  s.model ||
-  s.guitar_model ||
-  "-";
+        const url =
+          SUPABASE_URL +
+          "/rest/v1/services?service_no=eq." +
+          encodeURIComponent(serviceNo) +
+          "&select=*";
 
-const biaya = s.estimate || "Rp 0";
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+          }
+        });
 
-hasil.innerHTML = `
-<div class="result">
+        if (!response.ok) {
+          throw new Error("Gagal menghubungi database.");
+        }
 
-  <h2>🎸 ${s.service_no || "-"}</h2>
+        const data = await response.json();
 
-  <p><b>👤 Pelanggan:</b><br>
-  ${s.customer_name || "-"}</p>
+        if (!data || data.length === 0) {
+          hasil.innerHTML =
+            '<div class="error">No. Servis tidak ditemukan.</div>';
+          return;
+        }
 
-  <p><b>🎸 Gitar:</b><br>
-  ${guitar}</p>
+        const s = data[0];
 
-  <p><b>📌 Status Servis:</b><br>
-  <strong>${status}</strong></p>
+        const service = s.service_no || "-";
+        const customer = s.customer_name || "-";
+        const guitar = s.guitar || "-";
+        const status = s.status || "-";
+        const technician = s.technician || "-";
+        const biaya = formatMoney(s.estimate);
 
-  <div style="
-    background:#333;
-    border-radius:20px;
-    height:18px;
-    margin:12px 0;
-    overflow:hidden;
-  ">
-    <div style="
-      width:${progress}%;
-      height:100%;
-      background:#e0a928;
-      border-radius:20px;
-      transition:width .5s;
-    "></div>
-  </div>
+        const progress = getProgress(status);
 
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-    color:#aaa;
-    margin-bottom:20px;
-  ">
-    <span>Diterima</span>
-    <span>Diperiksa</span>
-    <span>Dikerjakan</span>
-    <span>Selesai</span>
-    <span>Diambil</span>
-  </div>
+        hasil.innerHTML = `
 
-  <p><b>💰 Biaya:</b><br>
-  Rp ${biaya}</p>
+          <div class="info">
+            <div class="label">No. Servis</div>
+            <div class="value">${service}</div>
+          </div>
 
-  <a
-    href="https://wa.me/6281258240494"
-    target="_blank"
-    style="
-      display:block;
-      text-align:center;
-      text-decoration:none;
-      background:#25D366;
-      color:white;
-      padding:15px;
-      border-radius:12px;
-      font-weight:bold;
-      margin-top:20px;
-    "
-  >
-    💬 Hubungi Why Guitar via WhatsApp
-  </a>
+          <div class="info">
+            <div class="label">Customer</div>
+            <div class="value">${customer}</div>
+          </div>
 
-</div>
-`;}catch(e){
-  hasil.innerHTML='<div class="result err"><b>Gagal membaca database.</b><br><br>'+e.message+'</div>';
- }
-}
-</script>
+          <div class="info">
+            <div class="label">Gitar</div>
+            <div class="value">${guitar}</div>
+          </div>
+
+          <div class="status">
+            Status: ${status}
+          </div>
+
+          <div class="label">Progress Servis</div>
+          <div class="progress">
+            <div
+              class="progress-bar"
+              style="width:${progress}%"
+            ></div>
+          </div>
+
+          <div class="info">
+            <div class="label">Teknisi</div>
+            <div class="value">${technician}</div>
+          </div>
+
+          <div class="info">
+            <div class="label">Estimasi Biaya</div>
+            <div class="value">${biaya}</div>
+          </div>
+
+          <a
+            class="wa"
+            href="https://wa.me/628xxxxxxxxxx"
+            target="_blank"
+          >
+            💬 Hubungi Why Guitar
+          </a>
+        `;
+
+      } catch (error) {
+
+        console.error(error);
+
+        hasil.innerHTML =
+          '<div class="error">Terjadi kesalahan saat mengambil data.</div>';
+      }
+    }
+
+    document
+      .getElementById("serviceNo")
+      .addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          cekStatus();
+        }
+      });
+  </script>
+
 </body>
 </html>
