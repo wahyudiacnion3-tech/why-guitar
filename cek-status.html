@@ -3,123 +3,311 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Why Guitar - Tes Database</title>
+<title>WHY GUITAR - Cek Status</title>
+
 <style>
 body{
   margin:0;
-  padding:20px;
-  background:#111;
-  color:white;
+  background:#090a0c;
+  color:#f4f4f4;
   font-family:Arial,sans-serif;
 }
-.box{
-  max-width:500px;
-  margin:30px auto;
-  background:#1e1e1e;
-  padding:25px;
-  border-radius:15px;
+.wrap{
+  max-width:600px;
+  margin:auto;
+  padding:30px 18px;
+}
+.card{
+  background:#1c1d22;
+  border:1px solid #35363e;
+  border-radius:20px;
+  padding:22px;
+  margin-top:20px;
 }
 h1{text-align:center}
+.sub{text-align:center;color:#aaa}
 input{
   width:100%;
-  padding:14px;
-  font-size:16px;
+  padding:16px;
+  margin-top:15px;
   box-sizing:border-box;
-  border-radius:8px;
-  border:0;
+  border-radius:12px;
+  border:1px solid #555;
+  background:#101116;
+  color:white;
+  font-size:17px;
 }
 button{
   width:100%;
-  padding:14px;
+  padding:16px;
   margin-top:10px;
   border:0;
-  border-radius:8px;
-  font-size:16px;
+  border-radius:12px;
+  background:#e12626;
+  color:white;
+  font-size:17px;
   font-weight:bold;
 }
-#hasil{
-  margin-top:20px;
-  padding:15px;
-  background:#292929;
-  border-radius:8px;
-  word-break:break-word;
+.result{margin-top:18px}
+.item{
+  background:#15171d;
+  border:1px solid #33353e;
+  border-radius:16px;
+  padding:18px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.no{font-size:21px;font-weight:bold}
+.muted{color:#aaa}
+.pill{
+  background:#183b2b;
+  color:#75e0a7;
+  padding:8px 12px;
+  border-radius:20px;
+  font-weight:bold;
+}
+.detail{
+  margin-top:15px;
+  padding-top:15px;
+  border-top:1px solid #333;
+  line-height:1.9;
+}
+.progress{
+  height:10px;
+  background:#444;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:8px;
+}
+.bar{
+  height:100%;
+  background:#e12626;
+}
+.err{
+  color:#ff8b8b;
+  text-align:center;
+  padding:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="wrap">
+
+<div class="card">
 
 <h1>WHY GUITAR</h1>
 
-<p style="text-align:center">
-Tes koneksi database
-</p>
+<div class="sub">
+Cek Status Servis Gitar
+</div>
 
 <input
-  id="nomor"
-  value="GTR-09-01"
-  placeholder="No. Servis"
->
+id="serviceNo"
+placeholder="Masukkan No. Servis"
+autocomplete="off">
 
-<button onclick="tes()">
-TES DATABASE
+<button onclick="checkStatus()">
+Cek Status →
 </button>
 
-<div id="hasil">
-Belum dites.
+<div id="statusResult" class="result"></div>
+
 </div>
 
 </div>
 
 <script>
 
-const URL_SUPABASE =
-"https://irfjnhzrfeqqobhntzu.supabase.co";
+const SUPABASE_URL =
+"https://irfjnhzrfeqqobhbntzu.supabase.co";
 
-const KEY_SUPABASE =
+const SUPABASE_KEY =
 "sb_publishable_XbSV_b9aa10bIWE8YqauBw_KPypPIe1";
 
-async function tes(){
 
-  const hasil =
-  document.getElementById("hasil");
+function uang(v){
 
-  const nomor =
-  document.getElementById("nomor").value.trim();
+  if(v === null || v === undefined || v === ""){
+    return "Belum ditentukan";
+  }
 
-  hasil.innerHTML = "Sedang menghubungi Supabase...";
+  let t = String(v).trim();
+
+  if(/^rp/i.test(t)){
+    t = t.replace(/^rp\.?\s*/i,"");
+  }
+
+  const angka = t.replace(/\D/g,"");
+
+  if(angka){
+    return "Rp " + Number(angka).toLocaleString("id-ID");
+  }
+
+  return String(v);
+}
+
+
+function persen(status){
+
+  const s = String(status || "").toLowerCase();
+
+  if(s.includes("selesai")) return 100;
+  if(s.includes("siap")) return 90;
+  if(s.includes("dikerjakan")) return 70;
+  if(s.includes("diperiksa")) return 40;
+
+  return 20;
+}
+
+
+function esc(v){
+
+  return String(v ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+async function checkStatus(){
+
+  const no =
+    document.getElementById("serviceNo").value.trim();
+
+  const result =
+    document.getElementById("statusResult");
+
+  if(!no){
+
+    result.innerHTML =
+      '<div class="err">Masukkan No. Servis terlebih dahulu.</div>';
+
+    return;
+  }
+
+  result.innerHTML = "Mencari data...";
 
   try{
 
     const url =
-      URL_SUPABASE +
+      SUPABASE_URL +
       "/rest/v1/services" +
       "?service_no=eq." +
-      encodeURIComponent(nomor) +
-      "&select=*";
+      encodeURIComponent(no) +
+      "&select=service_no,customer_name,guitar,status,technician,estimate";
 
-    const response = await fetch(
-  url + "&apikey=" + encodeURIComponent(KEY_SUPABASE)
-);
+    const response = await fetch(url,{
+      method:"GET",
+      headers:{
+        "apikey":SUPABASE_KEY
+      }
+    });
 
-    const text = await response.text();
+    if(!response.ok){
+      throw new Error("Gagal mengambil data");
+    }
 
-    hasil.innerHTML =
-      "<b>HTTP: " + response.status + "</b><br><br>" +
-      "<b>HASIL:</b><br>" +
-      text;
+    const data = await response.json();
+
+    if(!data.length){
+
+      result.innerHTML =
+        '<div class="err">No. Servis tidak ditemukan.</div>';
+
+      return;
+    }
+
+    const s = data[0];
+
+    const p = persen(s.status);
+
+    result.innerHTML = `
+
+      <div class="item">
+
+        <div class="row">
+
+          <div>
+            <div class="no">
+              ${esc(s.service_no)}
+            </div>
+
+            <div class="muted">
+              ${esc(s.customer_name)}
+            </div>
+          </div>
+
+          <div class="pill">
+            ${esc(s.status)}
+          </div>
+
+        </div>
+
+        <div class="detail">
+
+          Pelanggan:
+          <b>${esc(s.customer_name || "-")}</b>
+          <br>
+
+          Gitar:
+          <b>${esc(s.guitar || "-")}</b>
+          <br>
+
+          Teknisi:
+          <b>${esc(s.technician || "-")}</b>
+          <br>
+
+          Estimasi Biaya:
+          <b>${uang(s.estimate)}</b>
+
+        </div>
+
+        <div class="detail">
+
+          Progress Servis
+
+          <div class="progress">
+            <div
+              class="bar"
+              style="width:${p}%">
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
 
   }catch(error){
 
-    hasil.innerHTML =
-      "<b>ERROR:</b><br>" +
-      error.message;
+    console.error(error);
+
+    result.innerHTML =
+      '<div class="err">Terjadi kesalahan saat mengambil data.</div>';
 
   }
 
 }
+
+
+document
+.getElementById("serviceNo")
+.addEventListener("keydown",function(e){
+
+  if(e.key === "Enter"){
+    checkStatus();
+  }
+
+});
 
 </script>
 
