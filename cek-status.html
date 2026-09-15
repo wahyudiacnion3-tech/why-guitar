@@ -70,37 +70,102 @@ async function cek(){
    return;
   }
 
-  const s=data[0];
+   const s = data[0];
 
-  hasil.innerHTML=`
+const status = String(s.status || "Diterima").trim();
+
+const statusList = [
+  "Diterima",
+  "Sedang diperiksa",
+  "Dikerjakan",
+  "Selesai",
+  "Diambil"
+];
+
+let statusIndex = statusList.findIndex(
+  x => x.toLowerCase() === status.toLowerCase()
+);
+
+if (statusIndex < 0) statusIndex = 0;
+
+const progress = ((statusIndex + 1) / statusList.length) * 100;
+
+const guitar =
+  s.guitar_name ||
+  s.guitar ||
+  s.model ||
+  s.guitar_model ||
+  "-";
+
+const biaya = Number(s.total_cost || 0).toLocaleString("id-ID");
+
+hasil.innerHTML = `
 <div class="result">
+
   <h2>🎸 ${s.service_no || "-"}</h2>
 
   <p><b>👤 Pelanggan:</b><br>
   ${s.customer_name || "-"}</p>
 
   <p><b>🎸 Gitar:</b><br>
-  ${s.guitar_name || "-"}</p>
+  ${guitar}</p>
 
   <p><b>📌 Status Servis:</b><br>
-  <strong>${s.status || "Diterima"}</strong></p>
+  <strong>${status}</strong></p>
 
-  <div class="progress">
-    <div class="progress-bar"></div>
+  <div style="
+    background:#333;
+    border-radius:20px;
+    height:18px;
+    margin:12px 0;
+    overflow:hidden;
+  ">
+    <div style="
+      width:${progress}%;
+      height:100%;
+      background:#e0a928;
+      border-radius:20px;
+      transition:width .5s;
+    "></div>
+  </div>
+
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:#aaa;
+    margin-bottom:20px;
+  ">
+    <span>Diterima</span>
+    <span>Diperiksa</span>
+    <span>Dikerjakan</span>
+    <span>Selesai</span>
+    <span>Diambil</span>
   </div>
 
   <p><b>💰 Biaya:</b><br>
-  Rp ${Number(s.total_cost || 0).toLocaleString("id-ID")}</p>
+  Rp ${biaya}</p>
 
   <a
     href="https://wa.me/6281258240494"
     target="_blank"
-    class="wa">
+    style="
+      display:block;
+      text-align:center;
+      text-decoration:none;
+      background:#25D366;
+      color:white;
+      padding:15px;
+      border-radius:12px;
+      font-weight:bold;
+      margin-top:20px;
+    "
+  >
     💬 Hubungi Why Guitar via WhatsApp
   </a>
+
 </div>
-`;
- }catch(e){
+`;}catch(e){
   hasil.innerHTML='<div class="result err"><b>Gagal membaca database.</b><br><br>'+e.message+'</div>';
  }
 }
